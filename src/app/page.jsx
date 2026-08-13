@@ -1,7 +1,7 @@
 import HeroStage from "@/components/HeroStage";
 import Accordion from "@/components/Accordion";
 import { ArtStumps, ArtPitch } from "@/components/Art";
-import { Bolt, Download, Live, Phone, Shield, Wallet } from "@/components/Icons";
+import { Bolt, Download, Live, Shield, Wallet } from "@/components/Icons";
 import {
   Btn,
   CTABand,
@@ -30,38 +30,15 @@ const sports = [
 ];
 
 const games = [
-  { name: "Aviator Game", glyph: "✈", meta: "Fast-paced multiplier" },
-  { name: "Teen Patti Online", glyph: "♠", meta: "Three-card classic" },
-  { name: "Andar Bahar Online", glyph: "♦", meta: "Quick card rounds" },
-  { name: "Dragon Tiger Online", glyph: "♥", meta: "Two-side showdown" },
-  { name: "Roulette Online", glyph: "◉", meta: "Classic wheel table" },
-  { name: "Blackjack Online", glyph: "♣", meta: "Dealer table favourite" },
-  { name: "Baccarat Online", glyph: "✦", meta: "Player or banker" },
-  { name: "Online Slots", glyph: "★", meta: "Instant-play reels" },
-  { name: "Slot Games India", glyph: "❖", meta: "Popular reel library" },
-];
-
-const confidence = [
-  {
-    icon: <Shield />,
-    title: "Protected access",
-    body: "Sign-in and account controls stay clear and easy to find.",
-  },
-  {
-    icon: <Wallet />,
-    title: "Payment clarity",
-    body: "Deposit and withdrawal guidance is presented before you play.",
-  },
-  {
-    icon: <Phone />,
-    title: "Mobile ready",
-    body: "The sportsbook and casino experience adapts across compatible devices.",
-  },
-  {
-    icon: <Live />,
-    title: "Responsible by design",
-    body: "18+ guidance and financial-risk reminders remain prominent.",
-  },
+  { name: "Aviator Game", glyph: "✈" },
+  { name: "Teen Patti Online", glyph: "♠" },
+  { name: "Andar Bahar Online", glyph: "♦" },
+  { name: "Dragon Tiger Online", glyph: "♥" },
+  { name: "Roulette Online", glyph: "◉" },
+  { name: "Blackjack Online", glyph: "♣" },
+  { name: "Baccarat Online", glyph: "✦" },
+  { name: "Online Slots", glyph: "★" },
+  { name: "Slot Games India", glyph: "❖" },
 ];
 
 const highlights = [
@@ -162,24 +139,6 @@ export default function Home() {
           <Stat value={5} label="Steps to get started" />
           <Stat text="18+" label="Legal age applies" />
         </div>
-
-        <div className="confidence" data-anim="stagger" data-stagger="0.07">
-          <div className="confidence__intro">
-            <span className="eyebrow eyebrow--o">Built for confidence</span>
-            <p>Clear information at every important step.</p>
-          </div>
-          {confidence.map((item) => (
-            <article className="confidence__item" key={item.title}>
-              <span className="confidence__icon" aria-hidden="true">
-                {item.icon}
-              </span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </div>
-            </article>
-          ))}
-        </div>
       </Section>
 
       {/* =================================================== PLATFORM ==== */}
@@ -238,7 +197,7 @@ export default function Home() {
       {/* ================================================ CRICKET/FOOT ==== */}
       <div className="duo">
         <article className="duo__panel duo__panel--o">
-          <ArtStumps className="duo__art duo__art--stumps" data-speed="1.08" />
+          {/* <ArtStumps className="duo__art duo__art--stumps" data-speed="1.08" /> */}
           <span className="eyebrow">
             <span className="index index--brand">02</span> Cricket
           </span>
@@ -262,7 +221,7 @@ export default function Home() {
         </article>
 
         <article className="duo__panel duo__panel--g">
-          <ArtPitch className="duo__art duo__art--pitch" data-speed="1.08" />
+          
           <span className="eyebrow">
             <span className="index index--brand">03</span> Football
           </span>
@@ -311,20 +270,13 @@ export default function Home() {
         <div className="panels__track" data-pin-track>
           {games.map((game, i) => (
             <article className="panel" key={game.name}>
-              <div className="panel__top">
-                <span className="panel__index">{String(i + 1).padStart(2, "0")}</span>
-                <span className="panel__status">Featured</span>
-              </div>
-              <div className="panel__visual" aria-hidden="true">
-                <span className="panel__orbit panel__orbit--outer" />
-                <span className="panel__orbit panel__orbit--inner" />
-                <span className="panel__glyph">{game.glyph}</span>
-                <span className="panel__pulse" />
-              </div>
+              <span className="panel__index">{String(i + 1).padStart(2, "0")}</span>
+              <span className="panel__glyph" aria-hidden="true">
+                {game.glyph}
+              </span>
               <div className="panel__body">
                 <span className="tag">Casino</span>
                 <h3 className="panel__name">{game.name}</h3>
-                <p className="panel__meta">{game.meta}</p>
               </div>
             </article>
           ))}

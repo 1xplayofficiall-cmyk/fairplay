@@ -127,38 +127,76 @@
   );
 }
 
-/* The cricket ball, in the open space to the left of the centred headline.
-   Sized off the viewport so it always clears the type: at every width the
-   headline is centred with a max-width in ch, so the gap to its left grows
-   with the viewport at roughly the same rate this does. */
-.stage__ball {
+/* The two props flanking the centred headline: cricket ball left, Teen Patti
+   hand right — the two halves of the product, one on each side.
+
+   Both are pinned level with the headline rather than the frame. The sub is
+   the widest thing in the centre column (56ch), so any lower and they run into
+   it as soon as the viewport narrows; the headline is capped at 18ch and
+   always leaves room either side. */
+.stage__ball,
+.stage__cards {
   position: absolute;
-  /* Level with the headline, not the frame. The sub is the widest thing in the
-     centre column (56ch), so any lower and the ball runs into it as soon as the
-     viewport narrows; the headline is capped at 18ch and always leaves room. */
   top: 46%;
-  left: clamp(-1.5rem, 2vw, 3rem);
-  width: clamp(150px, 16.5vw, 290px);
-  aspect-ratio: 1;
   translate: 0 -50%;
 }
-.stage__ball svg {
+.stage__ball {
+  left: clamp(-1.5rem, 2vw, 3rem);
+  width: clamp(112px, 11.5vw, 200px);
+  aspect-ratio: 1;
+}
+.stage__cards {
+  right: clamp(-1.5rem, 1.5vw, 2.5rem);
+  width: clamp(150px, 17vw, 300px);
+  aspect-ratio: 260 / 220;
+}
+
+/* Carries the idle bob, so the parallax on the parent stays uncontested. */
+.stage__drift {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.stage__ball svg,
+.stage__cards svg {
   position: relative;
   z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
 }
-/* Light thrown back by the ball. Without it the object reads as pasted on. */
-.stage__ball-glow {
+
+/* Light thrown back by each prop. Without it they read as pasted on. */
+.stage__prop-glow {
   position: absolute;
   inset: -46%;
+}
+.stage__prop-glow--ball {
   background: radial-gradient(
     50% 50% at 50% 50%,
     rgba(255, 90, 60, 0.16),
     rgba(255, 140, 0, 0.05) 42%,
     transparent 70%
   );
+}
+/* Cooler and weaker than the ball's — white card stock throws far less colour,
+   and this side of the frame already has the green shaft in it. */
+.stage__prop-glow--cards {
+  inset: -38%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 245, 225, 0.12),
+    rgba(0, 200, 83, 0.04) 46%,
+    transparent 72%
+  );
+}
+
+.patti__rank {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 /* Kept deliberately shallow — a heavier falloff swallows the shafts, which is
@@ -331,20 +369,32 @@
     right: 4%;
   }
   /* Below this the centred headline reaches the gutters and there is no clear
-     space left for the ball — anywhere it fits, it sits behind the gradient
-     type and muddies it. Decoration loses to the headline. */
-  .stage__ball {
+     space left either side — anywhere the props fit, they sit behind the
+     gradient type and muddy it. Decoration loses to the headline. */
+  .stage__ball,
+  .stage__cards {
     display: none;
+  }
+
+  /* And with the props gone the hero becomes content-sized rather than
+     viewport-sized. Holding it at 100svh here centres ~360px of content in
+     ~730px of frame and the remainder is dead space above and below it —
+     full-bleed cinematic framing only pays for itself while there is
+     something wide enough to fill the frame. */
+  .stage {
+    min-height: auto;
+  }
+  .stage__inner {
+    min-height: auto;
+  }
+  .stage__core {
+    padding-block: clamp(2.25rem, 6vh, 3.5rem);
   }
 }
 
 @media (max-width: 620px) {
   .stage {
     --stage-top: 68px;
-    min-height: max(640px, 100svh);
-  }
-  .stage__inner {
-    min-height: calc(max(640px, 100svh) - var(--stage-top));
   }
   .stage__rule {
     font-size: 8px;

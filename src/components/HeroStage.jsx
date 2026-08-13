@@ -15,6 +15,7 @@
 import Link from "next/link";
 
 import CricketBall from "./CricketBall";
+import TeenPattiCards from "./TeenPattiCards";
 import { Btn } from "./ui";
 
 export default function HeroStage() {
@@ -34,12 +35,27 @@ export default function HeroStage() {
         <span className="stage__ground" data-speed="1.14" />
         <span className="stage__vignette" />
 
-        {/* After the vignette on purpose: the ball sits where the frame is
-            darkest, and behind it the falloff mutes it to almost nothing. Its
-            own glow is what seats it in the scene instead. */}
+        {/* Both props sit after the vignette on purpose: they occupy the
+            darkest part of the frame, and behind the falloff they mute to
+            almost nothing. Their own glows are what seat them in the scene.
+
+            Each is nested three deep because the motions stack and two of them
+            drive the same property: the outer span takes scroll parallax
+            (ScrollSmoother writes `y`), the inner one the idle bob (GSAP also
+            writes `y`), and the spin lives inside the artwork. Flattened onto
+            one element they would fight over the transform. */}
         <span className="stage__ball" data-speed="0.88">
-          <i className="stage__ball-glow" />
-          <CricketBall />
+          <span className="stage__drift" data-float="14">
+            <i className="stage__prop-glow stage__prop-glow--ball" />
+            <CricketBall />
+          </span>
+        </span>
+
+        <span className="stage__cards" data-speed="0.93">
+          <span className="stage__drift" data-float="9">
+            <i className="stage__prop-glow stage__prop-glow--cards" />
+            <TeenPattiCards />
+          </span>
         </span>
       </div>
 
@@ -67,7 +83,7 @@ export default function HeroStage() {
               Every move.
             </span>
             <span className="stage__title-accent" data-anim="split" data-on="load" data-delay="0.36">
-              One FairPlay.
+              On FairPlay.
             </span>
           </h1>
 

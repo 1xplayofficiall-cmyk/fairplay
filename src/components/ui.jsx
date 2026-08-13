@@ -238,11 +238,7 @@ export function PageHero({ route, kicker, title, sub, children, art, actions, le
       </div>
       <div className="shell page-hero__grid">
         <div className="page-hero__copy">
-          <nav className="page-hero__route" data-anim="fade" data-on="load">
-            <Link href="/">FairPlay</Link>
-            <span>/</span>
-            {route}
-          </nav>
+          
           <h1 className="page-hero__title">
             {kicker ? (
               <>

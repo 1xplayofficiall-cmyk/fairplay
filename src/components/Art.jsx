@@ -1,8 +1,3 @@
-/* ============================================================================
-   ART — decorative line compositions. Each one inherits currentColor so the
-   same shape can lean orange or green depending on where it sits, and each is
-   built from strokes so DrawSVGPlugin can draw it in on scroll.
-   ========================================================================== */
 
 const svg = {
   viewBox: "0 0 300 300",

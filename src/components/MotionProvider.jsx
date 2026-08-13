@@ -32,7 +32,7 @@
       timeouts, so a stall can never leave the page blank.
    ========================================================================== */
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
@@ -321,6 +321,11 @@ function buildScene({ desktop, hover }, teardown) {
       el,
       gsap.to(el, {
         rotation: 360 * (el.dataset.spin === "reverse" ? -1 : 1),
+        /* `data-spin-origin="100 100"` pins the pivot in SVG user units. Needed
+           whenever the artwork's centre is not its bounding-box centre — GSAP
+           resolves transformOrigin against the bbox, and for a clipped or
+           off-centre group that lands somewhere the shape never was. */
+        ...(el.dataset.spinOrigin ? { svgOrigin: el.dataset.spinOrigin } : {}),
         duration: num(el.dataset.spinDuration, 40),
         ease: "none",
         repeat: -1,
@@ -427,15 +432,56 @@ export default function MotionProvider() {
     { dependencies: [pathname], revertOnUpdate: true }
   );
 
-  /* Fresh page, fresh measurements. */
-  useGSAP(
-    () => {
-      smoother.current?.scrollTo(0, false);
-      const id = requestAnimationFrame(() => ScrollTrigger.refresh());
-      return () => cancelAnimationFrame(id);
-    },
-    { dependencies: [pathname] }
-  );
+  /* ------------------------------------------------------------ scroll reset
+     When navigating to any new page, force native window scroll and ScrollSmoother
+     to the very top (0) immediately so every page opens from the starting top. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    const resetToTop = () => {
+      // 1. Reset native window & document scroll to top
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
+      // 2. Reset GSAP smooth-content container transform
+      const content = document.querySelector("#smooth-content");
+      if (content) {
+        gsap.set(content, { y: 0, translateY: 0, clearProps: "transform" });
+      }
+
+      // 3. Reset ScrollSmoother instance
+      if (smoother.current) {
+        smoother.current.scrollTo(0, false);
+        if (typeof smoother.current.scrollTop === "function") {
+          smoother.current.scrollTop(0);
+        }
+      }
+    };
+
+    // Execute immediately on route change
+    resetToTop();
+
+    // Re-verify after DOM render & GSAP ScrollTrigger refresh
+    const frameId = requestAnimationFrame(() => {
+      resetToTop();
+      ScrollTrigger.refresh();
+    });
+
+    const timerId = setTimeout(() => {
+      resetToTop();
+      ScrollTrigger.refresh();
+    }, 50);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      clearTimeout(timerId);
+    };
+  }, [pathname]);
 
   return null;
 }
