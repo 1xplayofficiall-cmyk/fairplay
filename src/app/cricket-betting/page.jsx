@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtCricket } from "@/components/Art";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
@@ -20,11 +21,12 @@ import {
   TileGrid,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Cricket Betting India – Online Cricket Betting & Live Cricket Betting on FairPlay",
   description:
     "Experience Cricket Betting India with FairPlay — pre-match and Live Cricket Betting markets across IPL, ICC events, T20 leagues, ODIs and Test cricket.",
-};
+  path: "/cricket-betting",
+});
 
 const highlights = [
   "Comprehensive Online Cricket Betting Site",
@@ -168,9 +170,28 @@ const phoneRows = [
   { label: "Fall of next wicket", value: "Live" },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Cricket betting", path: "/cricket-betting" },
+]);
+
 export default function CricketBettingPage() {
   return (
     <main id="main" className="cricket-page">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/cricket-betting",
+            breadcrumb: crumbs,
+          }),
+          faqSchema(faqs, "/cricket-betting"),
+        )}
+      />
+
       <PageHero
         route={<span>Cricket betting</span>}
         kicker="Cricket Betting India"

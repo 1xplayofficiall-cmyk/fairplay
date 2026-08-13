@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtTennis } from "@/components/Art";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
@@ -18,11 +19,12 @@ import {
   TileGrid,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Tennis Betting Online – Explore Tennis Betting Odds & Markets on FairPlay",
   description:
     "Explore Tennis Betting Online with FairPlay — match winner, set betting, total games, handicaps, live tennis betting, and major Grand Slam tournament coverage.",
-};
+  path: "/tennis-betting",
+});
 
 const markets = [
   "Match winner",
@@ -182,9 +184,28 @@ const faqs = [
   },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Tennis betting", path: "/tennis-betting" },
+]);
+
 export default function TennisBettingPage() {
   return (
     <main id="main" className="tennis-page">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/tennis-betting",
+            breadcrumb: crumbs,
+          }),
+          faqSchema(faqs, "/tennis-betting"),
+        )}
+      />
+
       <PageHero
         route={<span>Tennis betting</span>}
         kicker="Explore Tennis Betting"

@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtMark } from "@/components/Art";
 import { Clock, Shield } from "@/components/Icons";
@@ -12,11 +13,12 @@ import {
   Ticker,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Betting FAQ | Sports Betting, Odds, Payments & Account Help",
   description:
     "Find answers to common betting questions about sports, odds, live betting, accounts, payments, withdrawals, bonuses, verification and responsible gambling.",
-};
+  path: "/faq",
+});
 
 const tickerItems = [
   "Account Help",
@@ -164,9 +166,28 @@ const faqsGroup5 = [
   },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "FAQ", path: "/faq" },
+]);
+
 export default function FAQPage() {
   return (
     <main id="main">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/faq",
+            breadcrumb: crumbs,
+          }),
+          faqSchema([...faqsGroup1, ...faqsGroup2, ...faqsGroup3, ...faqsGroup4, ...faqsGroup5], "/faq"),
+        )}
+      />
+
       <PageHero
         route={<span>Frequently Asked Questions</span>}
         kicker="Help & Support"

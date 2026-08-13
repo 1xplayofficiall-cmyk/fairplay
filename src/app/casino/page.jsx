@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtCasino } from "@/components/Art";
 import { Live, Shield, Sparkle } from "@/components/Icons";
@@ -18,11 +19,12 @@ import {
   TileGrid,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Online Casino Games",
   description:
     "Explore casino games online — slots, roulette, blackjack, baccarat and live dealer tables, with the rules and limits of each game explained.",
-};
+  path: "/casino",
+});
 
 const findItems = [
   "Online slots",
@@ -232,9 +234,28 @@ const faqs = [
   },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Casino", path: "/casino" },
+]);
+
 export default function CasinoPage() {
   return (
     <main id="main" className="casino-page">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/casino",
+            breadcrumb: crumbs,
+          }),
+          faqSchema(faqs, "/casino"),
+        )}
+      />
+
       <PageHero
         route={<span>Casino</span>}
         kicker="Explore casino games online"

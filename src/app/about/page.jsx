@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import { ArtMark } from "@/components/Art";
 import { Bolt, Check, Live, Phone, Shield, Wallet } from "@/components/Icons";
 import {
@@ -15,11 +16,12 @@ import {
   TileGrid,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "About FairPlay",
   description:
     "Welcome to the FairPlay Official Website — a modern platform bringing Online Sports Betting and Online Casino India together in one place.",
-};
+  path: "/about",
+});
 
 const sports = [
   "Cricket Betting India",
@@ -79,9 +81,27 @@ const phoneRows = [
   { label: "Slots · Aviator", value: "Open" },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+]);
+
 export default function AboutPage() {
   return (
     <main id="main" className="about-page">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/about",
+            breadcrumb: crumbs,
+          }),
+        )}
+      />
+
       <PageHero
         route={<span>About</span>}
         kicker="Welcome to FairPlay Official Website"

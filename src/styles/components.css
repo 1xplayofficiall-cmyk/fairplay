@@ -297,6 +297,35 @@
   min-height: 118px;
   gap: var(--sp-5);
 }
+
+/* Two-up on a phone means every tile is roughly 150px wide, so the desktop
+   padding and minimum heights stop being breathing room and start being the
+   reason the label has four lines. */
+@media (max-width: 620px) {
+  .tile {
+    gap: var(--sp-5);
+    min-height: 132px;
+    padding: var(--sp-4) 0.9rem;
+  }
+  .tile__name {
+    max-width: none;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+  }
+  .tile--compact {
+    min-height: 104px;
+    gap: var(--sp-4);
+    padding: 0.85rem 0.8rem;
+  }
+  .tile--compact .tile__name {
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+  .tile__arrow {
+    width: 13px;
+    height: 13px;
+  }
+}
 .tile--tall {
   min-height: 240px;
 }

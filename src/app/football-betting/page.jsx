@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtFootball } from "@/components/Art";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
@@ -18,11 +19,12 @@ import {
   TileGrid,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Football Betting Online",
   description:
     "Explore football betting online — upcoming fixtures, football odds, match result, total goals, correct score, handicap and live in-play markets.",
-};
+  path: "/football-betting",
+});
 
 const markets = [
   "Match winner",
@@ -170,9 +172,28 @@ const faqs = [
   },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Football betting", path: "/football-betting" },
+]);
+
 export default function FootballBettingPage() {
   return (
     <main id="main" className="football-page">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/football-betting",
+            breadcrumb: crumbs,
+          }),
+          faqSchema(faqs, "/football-betting"),
+        )}
+      />
+
       <PageHero
         route={<span>Football betting</span>}
         kicker="Explore football betting"

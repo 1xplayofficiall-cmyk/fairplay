@@ -1,3 +1,4 @@
+import { JsonLd, SITE, faqSchema, graph, webPageSchema } from "@/lib/seo";
 import HeroStage from "@/components/HeroStage";
 import Accordion from "@/components/Accordion";
 import { ArtStumps, ArtPitch } from "@/components/Art";
@@ -110,9 +111,18 @@ const phoneRows = [
   { label: "Live casino · Roulette", value: "Open" },
 ];
 
+/* The home page inherits the root layout's canonical and Open Graph entry, so
+   it only adds the nodes that describe this page. */
 export default function Home() {
   return (
     <main id="main">
+      <JsonLd
+        schema={graph(
+          webPageSchema({ title: SITE.title, description: SITE.description, path: "/" }),
+          faqSchema(faqs, "/")
+        )}
+      />
+
       {/* ======================================================= HERO ==== */}
       <HeroStage />
 

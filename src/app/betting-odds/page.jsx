@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtOdds } from "@/components/Art";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
@@ -18,11 +19,12 @@ import {
   TileGrid,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Betting Odds Explained | Sports, Live & Online Betting Odds",
   description:
     "Learn how betting odds work and how to read decimal, fractional and American odds. Explore sports betting odds, live odds, betting lines and more.",
-};
+  path: "/betting-odds",
+});
 
 const sportsMarkets = [
   "Football betting odds",
@@ -141,9 +143,28 @@ const faqs = [
   },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Betting odds", path: "/betting-odds" },
+]);
+
 export default function BettingOddsPage() {
   return (
     <main id="main">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/betting-odds",
+            breadcrumb: crumbs,
+          }),
+          faqSchema(faqs, "/betting-odds"),
+        )}
+      />
+
       <PageHero
         route={<span>Betting odds</span>}
         kicker="Betting odds explained"

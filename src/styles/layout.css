@@ -296,11 +296,31 @@
   }
 }
 @media (max-width: 620px) {
+  /* The `.block__body` variants have to be restated, not inherited: their
+     two-column rule above is a descendant selector and outranks a bare
+     `.cols-3` here, so without these a feature card ends up 156px wide and
+     363px tall on a phone — a three-line title over a six-line paragraph. */
   .cols-2,
   .cols-3,
   .cols-4,
-  .cols-5 {
+  .cols-5,
+  .block__body .cols-2,
+  .block__body .cols-3,
+  .block__body .cols-4,
+  .block__body .cols-5 {
     grid-template-columns: minmax(0, 1fr);
+  }
+  /* Tiles hold a two-up grid on a phone where a card carrying body copy would
+     not — they are a short label and an index, nothing else. Stacking nine of
+     them one per row made those sections three screens long for no gain.
+
+     The `:not(:has(p))` matters: Tile takes an optional note, and the odds
+     pages use it. Two-up those become a 158px column holding a paragraph —
+     476px tall. Keyed on the content rather than the column class, so feature
+     and account cards stay stacked too. */
+  .grid:has(> .tile):not(:has(> .tile p)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-3);
   }
   .head {
     margin-bottom: var(--sp-6);

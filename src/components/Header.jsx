@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
+import { Close } from "./Icons";
 import { Btn } from "./ui";
 
 const NAV = [
@@ -61,6 +62,18 @@ export default function Header() {
     };
   }, [open]);
 
+  /* The toggle is hidden above 980px. If the viewport crosses that line while
+     the panel is open — a rotation, or a dragged window — close it, or a mobile
+     panel is left floating beside the desktop nav with its scrim quietly
+     swallowing every click on the page. */
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 981px)");
+    const closeIfWide = () => mq.matches && setOpenFor(null);
+    closeIfWide();
+    mq.addEventListener("change", closeIfWide);
+    return () => mq.removeEventListener("change", closeIfWide);
+  }, []);
+
   /* Lock the page while the overlay is up, and allow Escape to dismiss it. */
   useEffect(() => {
     if (!open) return;
@@ -75,8 +88,10 @@ export default function Header() {
   }, [open]);
 
   /* ---------------------------------------------------------- menu animation
-     The panel wipes down with clip-path while the links rise out of their own
-     hairlines — the same masked-reveal language used for headings. */
+     A dropping panel rather than the full-screen wipe it used to be: it drops
+     from under the bar and the links rise out of their own hairlines. The old
+     clip-path wipe is gone with the full-bleed overlay — insetting a rounded
+     panel needs `round`, and animating y/opacity is cheaper anyway. */
   useGSAP(
     () => {
       const panel = menu.current;
@@ -87,15 +102,20 @@ export default function Header() {
       if (open) {
         const tl = gsap.timeline();
         tl.set(panel, { visibility: "visible" })
-          .to(panel, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.75, ease: "fp-in-out" })
-          .from(links, { yPercent: 110, autoAlpha: 0, stagger: 0.06, duration: 0.7 }, 0.18)
-          .from(foot, { autoAlpha: 0, y: 16, duration: 0.5 }, 0.45);
+          .fromTo(
+            panel,
+            { y: -14, autoAlpha: 0 },
+            { y: 0, autoAlpha: 1, duration: 0.42, ease: "fp" }
+          )
+          .from(links, { yPercent: 110, autoAlpha: 0, stagger: 0.04, duration: 0.5 }, 0.1)
+          .from(foot, { autoAlpha: 0, y: 12, duration: 0.4 }, 0.24);
         return;
       }
 
       gsap.to(panel, {
-        clipPath: "inset(0% 0% 100% 0%)",
-        duration: 0.5,
+        y: -10,
+        autoAlpha: 0,
+        duration: 0.28,
         ease: "fp-in-out",
         onComplete: () => gsap.set(panel, { visibility: "hidden" }),
       });
@@ -150,8 +170,32 @@ export default function Header() {
         </div>
       </header>
 
+      {/* The panel no longer covers the screen, so it needs somewhere to be
+          dismissed from. The scrim sits below the header rather than over it,
+          which leaves the toggle live — tap outside, tap the X, hit Escape or
+          tap the toggle again, all four close it. */}
+      <button
+        type="button"
+        className="menu-scrim"
+        data-open={open}
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={() => setOpen(false)}
+      />
+
       <div className="menu" id="site-menu" ref={menu} hidden={undefined}>
         <span className="menu__aurora" aria-hidden="true" />
+        <div className="menu__head">
+          <span className="menu__eyebrow">Menu</span>
+          <button
+            type="button"
+            className="menu__close"
+            onClick={() => setOpen(false)}
+            aria-label="Close menu"
+          >
+            <Close width={17} height={17} />
+          </button>
+        </div>
         <nav className="menu__list" aria-label="Mobile">
           {NAV.map((item, i) => (
             <div className="menu__item" key={item.href}>
@@ -163,13 +207,15 @@ export default function Header() {
           ))}
         </nav>
         <div className="menu__footer">
-          <Btn href="/#login" variant="ghost" size="lg">
-            FairPlay Login
-          </Btn>
-          <Btn href="/#register" variant="primary" size="lg">
-            FairPlay Register
-          </Btn>
-          <Btn href="/#download" variant="ghost" size="lg">
+          <div className="menu__footer-row">
+            <Btn href="/#login" variant="ghost">
+              Login
+            </Btn>
+            <Btn href="/#register" variant="primary">
+              Register
+            </Btn>
+          </div>
+          <Btn href="/#download" variant="ghost">
             APK Download
           </Btn>
         </div>

@@ -1,3 +1,4 @@
+import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtBasketball } from "@/components/Art";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
@@ -18,11 +19,12 @@ import {
   TileGrid,
 } from "@/components/ui";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Basketball Betting Online | Odds, Markets & Live Betting",
   description:
     "Explore basketball betting online with basketball odds, live betting, moneyline, point spreads, totals, player props and more. Check available basketball markets.",
-};
+  path: "/basketball-betting",
+});
 
 const markets = [
   "Moneyline",
@@ -124,9 +126,28 @@ const faqs = [
   },
 ];
 
+/* Home → this page. The trail matches the visible route line in PageHero. */
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Basketball betting", path: "/basketball-betting" },
+]);
+
 export default function BasketballBettingPage() {
   return (
     <main id="main">
+      <JsonLd
+        schema={graph(
+          crumbs,
+          webPageSchema({
+            title: metadata.title,
+            description: metadata.description,
+            path: "/basketball-betting",
+            breadcrumb: crumbs,
+          }),
+          faqSchema(faqs, "/basketball-betting"),
+        )}
+      />
+
       <PageHero
         route={<span>Basketball betting</span>}
         kicker="Basketball betting online"

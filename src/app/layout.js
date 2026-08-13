@@ -7,6 +7,7 @@ import MotionProvider from "@/components/MotionProvider";
 import Preloader from "@/components/Preloader";
 import Cursor from "@/components/Cursor";
 import ScrollProgress from "@/components/ScrollProgress";
+import { JsonLd, SITE, graph, organizationSchema, websiteSchema } from "@/lib/seo";
 
 /* Three voices, one system: Sora sets the display tone, Geist carries the
    body, Geist Mono handles labels and figures, and a single italic serif is
@@ -30,13 +31,16 @@ const instrument = Instrument_Serif({
 const MOTION_FLAG = `try{if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion')}}catch(e){}`;
 
 export const metadata = {
+  /* Everything URL-shaped below — canonicals, og:url, og:image — is written as
+     a relative path and resolved against this. Without it Next cannot build
+     absolute URLs and silently drops them. */
+  metadataBase: new URL(SITE.url),
   title: {
-    default: "FairPlay Official Website – Online Sports Betting & Online Casino in India",
+    default: SITE.title,
     template: "%s | FairPlay",
   },
-  description:
-    "FairPlay brings Online Sports Betting and Online Casino India together on one platform — cricket, football, tennis, kabaddi, esports, live dealer tables and the FairPlay App.",
-  applicationName: "FairPlay",
+  description: SITE.description,
+  applicationName: SITE.name,
   keywords: [
     "FairPlay",
     "Online Sports Betting",
@@ -47,14 +51,32 @@ export const metadata = {
     "FairPlay Login",
     "FairPlay APK Download",
   ],
-  robots: { index: true, follow: true },
-  openGraph: {
-    title: "FairPlay Official Website – Online Sports Betting & Online Casino in India",
-    description: "Experience Online Sports Betting and Casino Games with FairPlay.",
-    siteName: "FairPlay",
-    type: "website",
-    locale: "en_IN",
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
+  openGraph: {
+    title: SITE.title,
+    description: SITE.description,
+    url: "/",
+    siteName: SITE.name,
+    type: "website",
+    locale: SITE.locale,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE.title,
+    description: SITE.description,
+  },
+  category: "Sports betting",
 };
 
 export const viewport = {
@@ -74,6 +96,9 @@ export default function RootLayout({ children }) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
+        {/* Site-wide nodes, emitted once. Every page's own @graph references
+            these two by @id rather than repeating them. */}
+        <JsonLd schema={graph(organizationSchema(), websiteSchema())} />
       </head>
       <body>
         <a className="skip" href="#main">
