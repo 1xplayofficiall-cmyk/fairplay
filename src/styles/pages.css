@@ -1,0 +1,235 @@
+/* ============================================================================
+   PAGES — patterns shared by the sub-pages (about, casino, cricket, football).
+   All four now sit on the same dark system as the home page; the only thing
+   that changes between them is the hero artwork and the accent lean.
+   ========================================================================== */
+
+/* ============================== PAGE HERO ================================ */
+.page-hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: min(78svh, 720px);
+  padding-top: clamp(8rem, 16vh, 12rem);
+  padding-bottom: clamp(3rem, 7vw, 5.5rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+.page-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: var(--grad-brand-hairline);
+}
+.page-hero__grid {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 5rem);
+  width: 100%;
+}
+.page-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-5);
+}
+/* Same kicker + headline split as the home hero, so a long keyword-bearing
+   H1 can stay intact without collapsing into a column of single words. */
+.page-hero__title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.page-hero__kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--o-400);
+}
+.page-hero__headline {
+  display: block;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: var(--ls-mega);
+}
+.page-hero__sub {
+  max-width: 34ch;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: var(--ls-tight);
+  color: var(--o-300);
+}
+.page-hero__art {
+  position: relative;
+  justify-self: end;
+  width: min(320px, 40vw);
+  aspect-ratio: 1;
+  color: var(--o-500);
+}
+.page-hero__art svg {
+  width: 100%;
+  height: auto;
+}
+/* Breadcrumb-ish route label above the title. */
+.page-hero__route {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+.page-hero__route a:hover {
+  color: var(--o-400);
+}
+.page-hero__route span {
+  color: var(--o-400);
+}
+@media (max-width: 900px) {
+  .page-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-hero__art {
+    display: none;
+  }
+  .page-hero {
+    min-height: auto;
+  }
+}
+
+/* ============================== QUOTE BAND ===============================
+   A single oversized statement. Used to break up long-form pages. */
+.quote-band {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(2rem, 4vw, 3.5rem);
+  border-block: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.015);
+}
+.quote-band__text {
+  max-width: 24ch;
+  font-family: var(--font-display);
+  font-size: var(--fs-quote);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.028em;
+  color: var(--fg);
+}
+.quote-band__text em {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--o-300);
+}
+.quote-band--wide .quote-band__text {
+  max-width: 38ch;
+}
+
+/* ============================ CONTENT BLOCK ==============================
+   Homepage-style editorial section layout: <Head> over a hairline + wide body. */
+.block-section {
+  position: relative;
+  padding-block: clamp(2rem, 4vw, 3.5rem);
+  scroll-margin-top: 100px;
+}
+
+.block__body {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  margin-top: var(--sp-4);
+}
+.block__body > .prose {
+  width: 100%;
+  max-width: 100%;
+}
+.block__body h3 {
+  margin-top: var(--sp-3);
+  color: var(--o-300);
+  font-size: var(--fs-h3);
+}
+@media (max-width: 900px) {
+  .block {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-6);
+  }
+}
+
+/* ============================ RESPONSIBLE ================================
+   Regulatory copy deserves real design, not small grey text at the bottom. */
+.notice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-items: start;
+  padding: var(--sp-6);
+  border: 1px solid var(--stroke-o);
+  border-radius: var(--r-lg);
+  background: linear-gradient(140deg, rgba(255, 140, 0, 0.07), transparent 60%);
+}
+.notice__mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--stroke-o);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--o-400);
+}
+.notice__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.notice__body p {
+  max-width: 74ch;
+  font-size: var(--fs-small);
+  line-height: 1.7;
+  color: var(--fg-3);
+}
+@media (max-width: 620px) {
+  .notice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ============================== ART SHAPES ===============================
+   Inline SVG artwork inherits currentColor so a single component can lean
+   orange or green per page. */
+.art-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+.art-stroke--thick {
+  stroke-width: 8;
+}
+.art-dash {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-dasharray: 4 8;
+  opacity: 0.6;
+}
+.art-fill {
+  fill: currentColor;
+}

@@ -1,0 +1,389 @@
+/* ============================================================================
+   HOME HERO — CENTRE STAGE
+   ----------------------------------------------------------------------------
+   The headline sits dead centre; everything else is atmosphere behind it or a
+   hairline at the top and bottom of the frame. Depth is built from light —
+   floodlight, shafts, halo, horizon, vignette — layered at different parallax
+   speeds. All radial/linear gradients, no blur filters.
+
+   Markup: components/HeroStage.jsx
+   ========================================================================== */
+
+.stage {
+  --stage-top: 78px;
+  position: relative;
+  min-height: max(720px, 100svh);
+  padding-top: var(--stage-top);
+  overflow: hidden;
+  isolation: isolate;
+  background: radial-gradient(125% 85% at 50% -10%, #0c0f12 0%, #050607 48%, #020303 100%);
+}
+
+/* ============================== THE LIGHT FIELD ========================== */
+.stage__sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Floodlight from above the frame — the source everything else answers to. */
+.stage__flood {
+  position: absolute;
+  top: -46vh;
+  left: 50%;
+  width: min(1600px, 135vw);
+  height: min(1150px, 115vh);
+  translate: -50% 0;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 196, 130, 0.16),
+    rgba(255, 140, 0, 0.055) 40%,
+    transparent 70%
+  );
+}
+
+/* Two angled shafts. The mask feathers their long edges, which is what a blur
+   would otherwise be doing at a far higher cost.
+
+   These sit inboard of the vignette on purpose: further out they fall inside
+   its dark ring and disappear entirely, which is exactly what happened the
+   first time round. */
+.stage__beam {
+  position: absolute;
+  top: -30%;
+  width: clamp(260px, 32vw, 560px);
+  height: 160%;
+  mask-image: linear-gradient(90deg, transparent, #000 38%, #000 62%, transparent);
+}
+.stage__beam--o {
+  left: 20%;
+  rotate: 16deg;
+  background: linear-gradient(180deg, rgba(255, 152, 30, 0.3), rgba(255, 140, 0, 0.08) 48%, transparent 78%);
+}
+.stage__beam--g {
+  right: 18%;
+  rotate: -14deg;
+  background: linear-gradient(180deg, rgba(0, 220, 95, 0.24), rgba(0, 200, 83, 0.06) 48%, transparent 78%);
+}
+
+/* Faint concentric rings centred on the type — the same device as the CTA
+   band, which is what ties the top and bottom of the page together. */
+.stage__rings {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  width: min(920px, 98vw);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  /* Tight mask: any wider and the outermost arc sweeps out past the headline,
+     where a single faint curve reads as banding rather than structure. */
+  mask-image: radial-gradient(circle, #000 24%, transparent 58%);
+}
+.stage__rings i {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--stroke-1);
+  border-radius: 50%;
+}
+.stage__rings i:nth-child(2) {
+  inset: 17%;
+}
+.stage__rings i:nth-child(3) {
+  inset: 34%;
+  border-color: var(--stroke-o);
+  opacity: 0.38;
+}
+
+/* A soft lift directly behind the headline so the type sits in light rather
+   than on top of a flat panel. */
+.stage__halo {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  width: min(1150px, 94vw);
+  aspect-ratio: 1.95;
+  translate: -50% -50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.06), transparent 64%);
+}
+
+/* Light pooling on the floor of the frame. This replaced a hairline "horizon"
+   and two floating sparks: at this scale a 1px rule lands as an accidental
+   divider between the sub and the buttons, and isolated 6px dots read as dust
+   rather than as light. A soft pool has no edge to misread. */
+.stage__ground {
+  position: absolute;
+  bottom: -18%;
+  left: 50%;
+  width: min(1700px, 125vw);
+  height: 46%;
+  translate: -50% 0;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 150, 40, 0.13),
+    rgba(0, 200, 83, 0.05) 44%,
+    transparent 72%
+  );
+}
+
+/* The cricket ball, in the open space to the left of the centred headline.
+   Sized off the viewport so it always clears the type: at every width the
+   headline is centred with a max-width in ch, so the gap to its left grows
+   with the viewport at roughly the same rate this does. */
+.stage__ball {
+  position: absolute;
+  /* Level with the headline, not the frame. The sub is the widest thing in the
+     centre column (56ch), so any lower and the ball runs into it as soon as the
+     viewport narrows; the headline is capped at 18ch and always leaves room. */
+  top: 46%;
+  left: clamp(-1.5rem, 2vw, 3rem);
+  width: clamp(150px, 16.5vw, 290px);
+  aspect-ratio: 1;
+  translate: 0 -50%;
+}
+.stage__ball svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Light thrown back by the ball. Without it the object reads as pasted on. */
+.stage__ball-glow {
+  position: absolute;
+  inset: -46%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 90, 60, 0.16),
+    rgba(255, 140, 0, 0.05) 42%,
+    transparent 70%
+  );
+}
+
+/* Kept deliberately shallow — a heavier falloff swallows the shafts, which is
+   most of the depth in the frame. */
+.stage__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(118% 92% at 50% 44%, transparent 46%, rgba(0, 0, 0, 0.38) 80%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+/* ================================== FRAME ================================ */
+.stage__inner {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: calc(max(720px, 100svh) - var(--stage-top));
+  padding-bottom: clamp(1rem, 2.5vh, 1.75rem);
+}
+
+.stage__rule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-block: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+.stage__rule--top {
+  border-bottom: 1px solid var(--stroke-1);
+}
+.stage__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--fg-3);
+}
+.stage__live i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--g-500);
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.16);
+}
+
+.stage__rule--bottom {
+  justify-content: center;
+  gap: clamp(1.75rem, 7vw, 6rem);
+  border-top: 1px solid var(--stroke-1);
+}
+.stage__rule--bottom a {
+  position: relative;
+  padding-block: 0.2rem;
+  color: var(--fg-3);
+  transition: color var(--dur-2) var(--ease-out);
+}
+/* Underline grows from the centre, to match the centred composition. */
+.stage__rule--bottom a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  bottom: -2px;
+  height: 1px;
+  background: var(--brand);
+  transition: left var(--dur-2) var(--ease-out), right var(--dur-2) var(--ease-out);
+}
+.stage__rule--bottom a:hover {
+  color: var(--fg);
+}
+.stage__rule--bottom a:hover::after {
+  left: 0;
+  right: 0;
+}
+
+/* ================================= CENTRE ================================ */
+.stage__core {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2.4vh, 1.9rem);
+  padding-block: clamp(1.5rem, 4vh, 4rem);
+  text-align: center;
+}
+
+.stage__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand-soft);
+}
+.stage__eyebrow::before,
+.stage__eyebrow::after {
+  content: "";
+  width: clamp(26px, 5vw, 62px);
+  height: 1px;
+  background: var(--stroke-3);
+}
+
+.stage__title {
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7.3vw, 7rem);
+  font-weight: 720;
+  line-height: 1.1;
+  letter-spacing: -0.042em;
+  text-transform: uppercase;
+}
+.stage__title > span {
+  display: block;
+}
+/* The last line carries the full brand gradient rather than the white-to-brand
+   one the first two use, so the name lands. Specificity has to beat
+   `.t-gradient-lines .line`. */
+.stage__title .stage__title-accent .line {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-bottom: 0.25em;
+  margin-bottom: -0.25em;
+}
+/* Fallback for when SplitText never runs (JS off, reduced motion): there are
+   no .line children to paint, so colour the span itself. */
+.stage__title-accent {
+  color: var(--brand-soft);
+}
+
+.stage__sub {
+  max-width: 56ch;
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  letter-spacing: -0.012em;
+  color: var(--fg-3);
+}
+
+.stage__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-top: 0.4rem;
+}
+
+/* ================================ RESPONSIVE ============================= */
+@media (max-width: 860px) {
+  /* Each line has to survive on one row — `.line` carries a 0.12em trailing
+     pad for the masked reveal, so the type is sized with room to spare rather
+     than to the exact width of the longest line. */
+  .stage__title {
+    max-width: 16ch;
+    font-size: clamp(2.4rem, 8.6vw, 4.6rem);
+  }
+  .stage__sub {
+    max-width: 46ch;
+  }
+  .stage__beam--o {
+    left: 6%;
+  }
+  .stage__beam--g {
+    right: 4%;
+  }
+  /* Below this the centred headline reaches the gutters and there is no clear
+     space left for the ball — anywhere it fits, it sits behind the gradient
+     type and muddies it. Decoration loses to the headline. */
+  .stage__ball {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .stage {
+    --stage-top: 68px;
+    min-height: max(640px, 100svh);
+  }
+  .stage__inner {
+    min-height: calc(max(640px, 100svh) - var(--stage-top));
+  }
+  .stage__rule {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+  }
+  /* The centre label is the first thing to go — the dot and the age gate are
+     the two that carry information. */
+  .stage__rule--top .stage__live {
+    display: none;
+  }
+  .stage__rule--bottom {
+    gap: 1.5rem;
+  }
+  .stage__title {
+    max-width: 13ch;
+    font-size: clamp(1.95rem, 10.4vw, 3.4rem);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+  .stage__sub {
+    max-width: 38ch;
+    font-size: 0.95rem;
+  }
+  .stage__actions {
+    width: 100%;
+  }
+  .stage__actions .btn {
+    flex: 1 1 150px;
+  }
+}
+
+@media (max-width: 400px) {
+  .stage__actions {
+    flex-direction: column;
+  }
+  /* `flex: 1 1 150px` from the rule above is a basis on the main axis — once
+     that axis is vertical it becomes a 150px-tall button. */
+  .stage__actions .btn {
+    flex: none;
+    width: 100%;
+  }
+}

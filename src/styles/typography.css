@@ -1,0 +1,229 @@
+/* ============================================================================
+   TYPOGRAPHY — the type system. Role-named classes, never size-named.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ display */
+.t-mega {
+  font-family: var(--font-display);
+  font-size: var(--fs-mega);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-mega);
+}
+
+.t-h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: var(--ls-mega);
+}
+
+.t-h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: var(--ls-display);
+}
+
+.t-h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 650;
+  line-height: 1.16;
+  letter-spacing: var(--ls-tight);
+}
+
+.t-h4 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: var(--ls-tight);
+}
+
+/* --------------------------------------------------------------------- body */
+.t-lede {
+  width: 100%;
+  max-width: 100%;
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  letter-spacing: -0.012em;
+  color: var(--fg-2);
+}
+
+.t-body {
+  width: 100%;
+  max-width: 100%;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg-3);
+}
+
+.t-small {
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  color: var(--fg-3);
+}
+
+/* A stack of paragraphs with correct rhythm — used for all prose blocks. */
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  width: 100%;
+  max-width: 100%;
+}
+.prose > p {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg-3);
+}
+.prose--lede > p {
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  letter-spacing: -0.012em;
+  color: var(--fg-2);
+}
+.prose--wide {
+  max-width: none;
+}
+
+/* ------------------------------------------------------------------ accents */
+/* Editorial serif italic. Used sparingly — one or two words per section — for
+   the small shift in voice that makes a page feel art-directed. */
+.t-editorial {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+.t-gradient {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Headings that get a masked line-by-line reveal cannot carry the gradient on
+   themselves: SplitText moves each line into its own transformed box, which a
+   parent's background-clip: text has no reliable way to follow. Painting each
+   line instead keeps the reveal and the gradient — and leaves the heading
+   plain white if JS never runs. */
+.t-gradient-lines .line {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
+}
+
+.line {
+  padding-right: 0.12em;
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
+  box-sizing: content-box;
+}
+
+[data-anim="split"],
+[data-anim="chars"] {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.t-brand {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.t-o {
+  color: var(--o-400);
+}
+.t-g {
+  color: var(--g-400);
+}
+
+/* ------------------------------------------------------------------- labels */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+.eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: var(--grad-brand);
+}
+.eyebrow--bare::before {
+  display: none;
+}
+.eyebrow--o {
+  color: var(--o-400);
+}
+
+/* Monospaced index numbers (01, 02…). Tabular so they never shift. */
+.index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-4);
+}
+.index--brand {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+}
+
+/* Inline text link with a hairline that draws in on hover. */
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  color: var(--fg);
+  font-weight: 550;
+}
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: var(--grad-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-3) var(--ease-out);
+}
+.link:hover::after {
+  transform: scaleX(1);
+}
+.link svg {
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.link:hover svg {
+  transform: translateX(3px);
+}

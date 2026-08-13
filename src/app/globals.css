@@ -1,26 +1,34 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
+
+@import "../styles/tokens.css";
+@import "../styles/base.css";
+@import "../styles/typography.css";
+@import "../styles/layout.css";
+@import "../styles/components.css";
+@import "../styles/chrome.css";
+@import "../styles/hero.css";
+@import "../styles/home.css";
+@import "../styles/pages.css";
+
+/* Expose the design tokens to Tailwind's utility generator so one-off
+   utilities stay on-system instead of inventing new values. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  --color-ink: var(--ink-000);
+  --color-surface: var(--bg-raise);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-3);
+  --color-brand: var(--o-500);
+  --color-accent: var(--g-500);
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }

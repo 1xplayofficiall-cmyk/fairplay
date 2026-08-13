@@ -1,0 +1,1128 @@
+/* ============================================================================
+   COMPONENTS — buttons, surfaces, tiles, lists, ticker, accordion, artwork
+   ========================================================================== */
+
+/* ============================== BUTTONS ================================== */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7em;
+  padding: 1.05em 1.9em;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  font-family: var(--font-display);
+  font-size: var(--fs-micro);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+.btn:active {
+  transform: scale(0.985);
+}
+
+.btn__label {
+  position: relative;
+  z-index: 2;
+}
+
+/* Primary — brand gradient with a sheen that sweeps on hover. */
+.btn--primary {
+  color: #0a0602;
+  background: var(--grad-brand);
+  box-shadow: var(--glow-o), var(--sh-1);
+}
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(103deg, transparent 20%, rgba(255, 255, 255, 0.55) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.75s var(--ease-out);
+}
+.btn--primary:hover {
+  box-shadow: var(--glow-o-lg), var(--sh-2);
+}
+.btn--primary:hover::after {
+  transform: translateX(120%);
+}
+
+/* Ghost — hairline that fills with a brand tint from the bottom. */
+.btn--ghost {
+  color: var(--fg);
+  border-color: var(--stroke-3);
+  background: rgba(255, 255, 255, 0.02);
+}
+.btn--ghost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--grad-surface-g);
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+.btn--ghost:hover {
+  border-color: var(--stroke-g);
+  box-shadow: var(--glow-g);
+}
+.btn--ghost:hover::after {
+  opacity: 1;
+}
+
+/* Quiet — text-scale action for headers and cards. */
+.btn--quiet {
+  padding: 0.8em 1.25em;
+  color: var(--fg-2);
+  border-color: var(--stroke-2);
+}
+.btn--quiet:hover {
+  color: var(--fg);
+  border-color: var(--stroke-3);
+  background: var(--surface-hover);
+}
+
+.btn--lg {
+  padding: 1.25em 2.4em;
+  font-size: var(--fs-small);
+}
+.btn--block {
+  width: 100%;
+}
+
+/* Round icon button with a rotating hairline ring. */
+.btn-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--stroke-2);
+  border-radius: 50%;
+  color: var(--fg-2);
+  transition: all var(--dur-2) var(--ease-out);
+}
+.btn-icon:hover {
+  color: var(--o-400);
+  border-color: var(--stroke-o);
+  transform: rotate(45deg);
+}
+
+/* ================================ PILL =================================== */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.55em 1.05em 0.55em 0.8em;
+  border: 1px solid var(--stroke-2);
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.03);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+}
+.pill__dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--g-400);
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.16);
+}
+.pill__dot::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid var(--g-400);
+  animation: pulse-ring 2.4s var(--ease-out) infinite;
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  70%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.35em 0.7em;
+  border: 1px solid var(--stroke-2);
+  border-radius: var(--r-xs);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+
+/* =============================== SURFACES ================================
+   One card primitive, three skins. All of them share the pointer-tracked
+   highlight: JS writes --mx/--my, CSS paints a soft light at that point.
+   ========================================================================= */
+.card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: var(--sp-6);
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  transition: border-color var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out),
+    box-shadow var(--dur-3) var(--ease-out);
+}
+
+/* layer 1 — the sheet's own light */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: var(--grad-surface);
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+
+/* layer 2 — pointer highlight */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(255, 140, 0, 0.13),
+    rgba(0, 200, 83, 0.07) 42%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+
+.card:hover {
+  border-color: var(--stroke-2);
+  box-shadow: var(--sh-2);
+}
+.card:hover::before,
+.card:hover::after {
+  opacity: 1;
+}
+
+/* Tile — the repeated grid unit for sports / games / features. */
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--sp-7);
+  min-height: 168px;
+  padding: var(--sp-5);
+}
+.tile__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+.tile__name {
+  position: relative;
+  max-width: 15ch;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: var(--ls-tight);
+  line-height: 1.2;
+  color: var(--fg);
+}
+.tile__arrow {
+  color: var(--fg-4);
+  transform: translate(-4px, 4px);
+  opacity: 0;
+  transition: all var(--dur-3) var(--ease-out);
+}
+.tile:hover .tile__arrow {
+  color: var(--o-400);
+  transform: translate(0, 0);
+  opacity: 1;
+}
+/* A brand hairline that grows along the top edge on hover. */
+.tile__edge {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: var(--grad-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-4) var(--ease-out);
+}
+.tile:hover .tile__edge {
+  transform: scaleX(1);
+}
+.tile:hover {
+  transform: translateY(-4px);
+}
+
+/* Compact tile styling for 5-across grids */
+.tile--compact,
+.cols-5 .tile {
+  padding: 1.25rem 1.1rem;
+  gap: var(--sp-3);
+  min-height: 130px;
+}
+.tile--compact .tile__name,
+.cols-5 .tile__name {
+  max-width: none;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.tile--compact {
+  min-height: 118px;
+  gap: var(--sp-5);
+}
+.tile--tall {
+  min-height: 240px;
+}
+
+/* Feature block — icon mark, title, copy. */
+.feature {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-6);
+}
+.feature__mark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: var(--sp-2);
+  border: 1px solid var(--stroke-2);
+  border-radius: var(--r-md);
+  background: var(--grad-surface);
+  color: var(--o-400);
+}
+.feature--g .feature__mark {
+  color: var(--g-400);
+}
+
+/* Quote / callout — a brand rule down the left edge. */
+.callout {
+  position: relative;
+  padding: var(--sp-5) var(--sp-6);
+  border-radius: var(--r-md);
+  background: linear-gradient(97deg, rgba(255, 140, 0, 0.06), rgba(0, 200, 83, 0.02) 55%, transparent);
+}
+.callout::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--grad-brand);
+  border-radius: var(--r-pill);
+}
+.callout p {
+  max-width: 62ch;
+  color: var(--fg-2);
+}
+
+/* ================================ STATS ================================== */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.stat__num {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat__label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+
+/* Divided stat row — hairlines between cells, none on the outside. */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--stroke-1);
+  border-block: 1px solid var(--stroke-1);
+}
+.stat-row > * {
+  padding: var(--sp-6) var(--sp-5);
+  background: var(--bg);
+}
+@media (max-width: 780px) {
+  .stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ================================ LISTS ================================== */
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--stroke-1);
+}
+.list > li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9em;
+  padding: 0.95em 0;
+  border-bottom: 1px solid var(--stroke-1);
+  font-size: var(--fs-small);
+  font-weight: 550;
+  color: var(--fg-2);
+  list-style: none;
+  transition: color var(--dur-2) var(--ease-out), padding-left var(--dur-3) var(--ease-out);
+}
+.list > li::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  margin-top: 0.55em;
+  border-radius: 50%;
+  background: var(--o-500);
+  transition: background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+.list > li:hover {
+  padding-left: 0.5em;
+  color: var(--fg);
+}
+.list > li:hover::before {
+  background: var(--g-400);
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.15);
+}
+/* Column count is a variable so the breakpoints below can step a list down
+   without restating the grid. */
+.list--2col,
+.list--3col,
+.list--4col {
+  display: grid;
+  grid-template-columns: repeat(var(--list-cols), minmax(0, 1fr));
+  column-gap: clamp(1.5rem, 4vw, 3.5rem);
+}
+.list--2col {
+  --list-cols: 2;
+}
+.list--3col {
+  --list-cols: 3;
+}
+.list--4col {
+  --list-cols: 4;
+}
+
+/* Grid lists carry the rule *above* each item rather than below it. A bottom
+   rule has to be stripped from the final row, and which items those are
+   depends on both the item count and the column count — which changes at every
+   breakpoint. Ruling the top instead is correct for any combination of the
+   two, with no counting: row one draws the list's top edge, and the last row
+   never leaves a hairline hanging under it. */
+.list--2col,
+.list--3col,
+.list--4col {
+  border-top: 0;
+}
+.list--2col > li,
+.list--3col > li,
+.list--4col > li {
+  border-top: 1px solid var(--stroke-1);
+  border-bottom: 0;
+}
+
+/* Premium Panel Container for Bullets inside Content Blocks */
+.block__body > .bullets,
+.bullets--panel {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(1.5rem, 4vw, 2.5rem);
+  background: rgba(13, 16, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-1);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.block__body > .bullets::before,
+.bullets--panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--grad-brand);
+}
+/* Wide lists step down a column at a time rather than dropping straight to
+   one, so a 4-up of short market names stays a grid on a tablet. */
+@media (max-width: 1100px) {
+  .list--4col {
+    --list-cols: 3;
+  }
+}
+@media (max-width: 900px) {
+  .list--3col,
+  .list--4col {
+    --list-cols: 2;
+  }
+}
+@media (max-width: 780px) {
+  .list--2col,
+  .list--3col,
+  .list--4col {
+    --list-cols: 1;
+  }
+}
+
+/* Numbered steps with a connecting spine. */
+.steps {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  padding-left: var(--sp-7);
+}
+.steps::before {
+  content: "";
+  position: absolute;
+  inset: 0.65em auto 0.9em 15px;
+  width: 1px;
+  background: var(--stroke-2);
+}
+/* The lit portion of the spine — grown by GSAP as the block scrolls in. */
+.steps__spine {
+  position: absolute;
+  inset: 0.65em auto auto 15px;
+  width: 1px;
+  height: calc(100% - 1.55em);
+  background: var(--grad-brand);
+  transform-origin: top;
+}
+.steps > li {
+  position: relative;
+  list-style: none;
+  font-size: var(--fs-body);
+  font-weight: 550;
+  color: var(--fg-2);
+}
+.steps__num {
+  position: absolute;
+  left: calc(-1 * var(--sp-7));
+  top: 0.15em;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  border: 1px solid var(--stroke-2);
+  border-radius: 50%;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--o-400);
+}
+
+/* The steps as a row of cards filling the width of the block instead of
+   leaving three-quarters of it empty. Held back to wide viewports: below this
+   the columns get too narrow for a sentence, and the stacked spine above is
+   the better layout. */
+@media (min-width: 1081px) {
+  .steps--rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: var(--sp-3);
+    padding-left: 0;
+  }
+  /* The connecting line belongs to the stacked layout. Between separated cards
+     it would have to cross the gaps, and the numbers already carry the order. */
+  .steps--rail::before,
+  .steps--rail .steps__spine {
+    display: none;
+  }
+  /* `.card` supplies the border, surface and pointer light; only the metrics
+     are overridden, because a card this narrow cannot afford --sp-6 padding. */
+  .steps--rail > li {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--sp-5);
+    min-height: 170px;
+    padding: var(--sp-5) var(--sp-4);
+    border-radius: var(--r-md);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+  }
+  /* Back into flow as the card's first child. */
+  .steps--rail .steps__num {
+    position: static;
+  }
+}
+
+/* Below the breakpoint these fall back to the stacked layout, where the number
+   is positioned outside the item to sit on the spine. The card treatment has
+   to come off with it: its border would cut between the number and its text,
+   and `overflow: hidden` clips the number away altogether. */
+@media (max-width: 1080px) {
+  .steps--rail > li.card {
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  .steps--rail > li.card::before,
+  .steps--rail > li.card::after {
+    display: none;
+  }
+}
+
+/* =============================== ACCORDION =============================== */
+.faq-list {
+  border-top: 1px solid var(--stroke-1);
+}
+.faq-item {
+  border-bottom: 1px solid var(--stroke-1);
+}
+.faq-item__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  width: 100%;
+  padding: 1.4em 0;
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  color: var(--fg);
+  transition: color var(--dur-2) var(--ease-out);
+}
+.faq-item__q:hover {
+  color: var(--o-300);
+}
+.faq-item__sign {
+  position: relative;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--stroke-2);
+  border-radius: 50%;
+  transition: border-color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);
+}
+.faq-item__sign::before,
+.faq-item__sign::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 1.5px;
+  background: var(--o-400);
+  transform: translate(-50%, -50%);
+  transition: transform var(--dur-3) var(--ease-out), background var(--dur-2) var(--ease-out);
+}
+.faq-item__sign::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+.faq-item[data-open="true"] .faq-item__sign {
+  border-color: var(--stroke-g);
+  background: rgba(0, 200, 83, 0.08);
+}
+.faq-item[data-open="true"] .faq-item__sign::before,
+.faq-item[data-open="true"] .faq-item__sign::after {
+  background: var(--g-400);
+}
+.faq-item[data-open="true"] .faq-item__sign::after {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+.faq-item__a {
+  overflow: hidden;
+  height: 0;
+}
+.faq-item__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: 0 clamp(2rem, 8vw, 6rem) 1.7em 0;
+}
+.faq-item__inner p {
+  max-width: 68ch;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg-3);
+}
+/* With JS off, <details>-free accordions must still be readable. */
+html:not(.motion) .faq-item__a {
+  height: auto;
+}
+
+/* ================================ TICKER ================================= */
+.ticker {
+  position: relative;
+  overflow: hidden;
+  padding-block: 1.15rem;
+  border-block: 1px solid var(--stroke-1);
+  background: linear-gradient(90deg, rgba(255, 140, 0, 0.045), rgba(0, 200, 83, 0.045));
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.ticker__track {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  width: max-content;
+  will-change: transform;
+}
+.ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  font-family: var(--font-display);
+  font-size: clamp(0.8125rem, 1.1vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--fg-2);
+}
+.ticker__item::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--o-500);
+}
+.ticker__item:nth-child(even)::after {
+  background: var(--g-500);
+}
+
+/* ============================= PINNED PANELS =============================
+   Desktop: pinned and scrubbed sideways by ScrollTrigger.
+   Below that: an ordinary swipeable overflow strip, which is what a touch
+   device wants anyway. */
+.panels {
+  position: relative;
+  overflow: hidden;
+}
+.panels__track {
+  display: flex;
+  gap: var(--sp-4);
+  width: max-content;
+  padding-inline: var(--gutter);
+}
+/* When the strip is pinned it owns the viewport, so it needs the height to
+   hold and the track needs to sit on the optical centre. */
+@media (min-width: 981px) {
+  .panels[data-pin-x] {
+    display: flex;
+    align-items: center;
+    min-height: 100svh;
+  }
+}
+@media (max-width: 980px) {
+  .panels {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .panels__track {
+    padding-bottom: var(--sp-3);
+  }
+  .panel {
+    scroll-snap-align: center;
+    min-height: 320px;
+  }
+}
+.panel {
+  --panel-accent: 255, 140, 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: clamp(240px, 25vw, 330px);
+  min-height: 410px;
+  padding: var(--sp-6);
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 43%, rgba(var(--panel-accent), 0.13), transparent 34%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012));
+  transition: border-color var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out),
+    box-shadow var(--dur-3) var(--ease-out);
+}
+.panel:nth-child(3n + 2) {
+  --panel-accent: 0, 200, 83;
+}
+.panel:nth-child(3n) {
+  --panel-accent: 255, 184, 101;
+}
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(var(--panel-accent), 0.16), transparent 45%),
+    repeating-linear-gradient(90deg, transparent 0 44px, rgba(255, 255, 255, 0.025) 44px 45px);
+  opacity: 0.45;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+.panel:hover {
+  border-color: rgba(var(--panel-accent), 0.38);
+  transform: translateY(-5px);
+  box-shadow: 0 22px 58px -34px rgba(var(--panel-accent), 0.6);
+}
+.panel:hover::before {
+  opacity: 1;
+}
+.panel__top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.panel__index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--fg-4);
+}
+.panel__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.panel__status::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(var(--panel-accent));
+  box-shadow: 0 0 0 4px rgba(var(--panel-accent), 0.1);
+}
+.panel__visual {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 190px;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.panel__orbit {
+  position: absolute;
+  border: 1px solid rgba(var(--panel-accent), 0.42);
+  border-radius: 50%;
+  transition: transform var(--dur-4) var(--ease-out), border-color var(--dur-3) var(--ease-out);
+}
+.panel__orbit--outer {
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent 49.5%, rgba(var(--panel-accent), 0.2) 50%, transparent 50.5%),
+    linear-gradient(transparent 49.5%, rgba(var(--panel-accent), 0.2) 50%, transparent 50.5%);
+}
+.panel__orbit--inner {
+  inset: 25%;
+  border-style: dashed;
+  opacity: 0.72;
+}
+.panel__pulse {
+  position: absolute;
+  inset: 9%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--panel-accent), 0.22), transparent 68%);
+  box-shadow: inset 0 0 38px rgba(var(--panel-accent), 0.13);
+}
+.panel__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.panel__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.8vw, 1.625rem);
+  font-weight: 650;
+  letter-spacing: var(--ls-tight);
+  line-height: 1.1;
+}
+.panel__glyph {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-editorial);
+  font-size: 4.5rem;
+  line-height: 1;
+  color: rgb(var(--panel-accent));
+  text-shadow: 0 0 34px rgba(var(--panel-accent), 0.36);
+  user-select: none;
+  transition: transform var(--dur-4) var(--ease-spring), text-shadow var(--dur-3) var(--ease-out);
+}
+.panel:hover .panel__glyph {
+  transform: scale(1.1) rotate(-4deg);
+  text-shadow: 0 0 46px rgba(var(--panel-accent), 0.55);
+}
+.panel:hover .panel__orbit--outer {
+  transform: rotate(12deg) scale(1.04);
+  border-color: rgba(var(--panel-accent), 0.72);
+}
+.panel:hover .panel__orbit--inner {
+  transform: rotate(-22deg);
+}
+.panel__meta {
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--fg-3);
+}
+@media (max-width: 980px) {
+  .panel {
+    min-height: 360px;
+  }
+  .panel__visual {
+    width: 165px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel:hover,
+  .panel:hover .panel__glyph,
+  .panel:hover .panel__orbit {
+    transform: none;
+  }
+}
+
+/* ============================== ARTWORK ================================== */
+/* Ambient bloom. Two soft radial fields that drift very slowly. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+/* No blur filter: these are radial gradients, which are already soft. A blur
+   on a 46vw element makes it a large, expensive layer to rasterise — and it
+   used to be animated, which re-rasterised it every frame. */
+.aurora__blob {
+  position: absolute;
+  border-radius: 50%;
+}
+.aurora__blob--o {
+  width: 46vw;
+  height: 46vw;
+  top: -14vw;
+  right: -10vw;
+  background: radial-gradient(circle, rgba(255, 140, 0, 0.16), rgba(255, 140, 0, 0.04) 45%, transparent 68%);
+}
+.aurora__blob--g {
+  width: 40vw;
+  height: 40vw;
+  bottom: -16vw;
+  left: -12vw;
+  background: radial-gradient(circle, rgba(0, 200, 83, 0.13), transparent 66%);
+}
+.aurora__blob--center {
+  width: 60vw;
+  height: 60vw;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  background: radial-gradient(circle, rgba(255, 140, 0, 0.08), rgba(0, 200, 83, 0.04) 42%, transparent 66%);
+}
+
+/* Device mockup used in the app sections. */
+.phone {
+  position: relative;
+  width: min(288px, 74vw);
+  aspect-ratio: 288 / 560;
+  padding: 12px;
+  border: 1px solid var(--stroke-3);
+  border-radius: 42px;
+  background: linear-gradient(168deg, var(--ink-400), var(--ink-100));
+  box-shadow: var(--sh-3), var(--sh-inset);
+}
+.phone::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 42px;
+  padding: 1px;
+  background: linear-gradient(168deg, rgba(255, 255, 255, 0.22), transparent 40%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.phone__screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 30px 14px 14px;
+  border-radius: 32px;
+  overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255, 140, 0, 0.14), transparent 60%), var(--ink-050);
+}
+.phone__notch {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  translate: -50% 0;
+  width: 74px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.14);
+}
+.phone__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--stroke-1);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.phone__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 12px;
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--fg-2);
+}
+.phone__odd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: var(--r-xs);
+  background: rgba(0, 200, 83, 0.14);
+  color: var(--g-300);
+}
+.phone__cta {
+  margin-top: auto;
+  padding: 11px;
+  border-radius: var(--r-sm);
+  background: var(--grad-brand);
+  color: #0a0602;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ============================== WORDMARK =================================
+   Oversized outlined wordmark, used as a divider.
+
+   Sized in `cqw` — percent of its own container, not of the viewport. With
+   viewport units the text kept growing after the container hit the shell's
+   max-width, so past ~1500px it overflowed and the final letter was clipped.
+   At 20cqw the glyphs measure ~90% of the container at every width, so it can
+   never outgrow its box. (Measured ratio: text width ≈ 4.52 × font-size.) */
+.wordmark {
+  position: relative;
+  display: block;
+  font-family: var(--font-display);
+  font-size: 20cqw;
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.055em;
+  text-align: center;
+  user-select: none;
+}
+
+.wordmark__outline,
+.wordmark__glow {
+  display: block;
+}
+
+.wordmark__outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--stroke-2);
+}
+
+/* The lit copy. Sits exactly on top of the outline, filled with the brand
+   gradient, and revealed only through a soft circular mask that follows the
+   pointer — so the letters appear to catch the light as the cursor passes.
+   --mx / --my are written by the motion layer on the parent. */
+.wordmark__glow {
+  position: absolute;
+  inset: 0;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-mask-image: radial-gradient(
+    circle 260px at var(--mx, -999px) var(--my, -999px),
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 55%,
+    transparent 78%
+  );
+  mask-image: radial-gradient(
+    circle 260px at var(--mx, -999px) var(--my, -999px),
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 55%,
+    transparent 78%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+.footer-word:hover .wordmark__glow {
+  opacity: 1;
+}
+@media (hover: none) {
+  .wordmark__glow {
+    display: none;
+  }
+}

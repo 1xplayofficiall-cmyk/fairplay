@@ -1,0 +1,308 @@
+/* ============================================================================
+   LAYOUT — containers, section rhythm, grids, rules
+   ========================================================================== */
+
+/* ------------------------------------------------------------------- shell */
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.shell--wide {
+  max-width: 1600px;
+}
+.shell--narrow {
+  max-width: 980px;
+}
+
+/* ----------------------------------------------------------------- section */
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.25) 20%, rgba(0, 200, 83, 0.25) 80%, transparent);
+  pointer-events: none;
+}
+.section--tight {
+  padding-block: calc(var(--section-y) * 0.5);
+}
+.section--flush-top {
+  padding-top: 0;
+}
+.section--flush-bottom {
+  padding-bottom: 0;
+}
+
+/* A band is a full-bleed tinted strip. Because the page is black, bands are
+   built from near-invisible lifts rather than different hues. */
+.band {
+  position: relative;
+  isolation: isolate;
+  border-block: 1px solid rgba(255, 255, 255, 0.1);
+}
+.band--raise {
+  background: linear-gradient(180deg, rgba(255, 140, 0, 0.04), rgba(9, 11, 12, 0.95) 40%, rgba(0, 200, 83, 0.03));
+}
+.band--sunken {
+  background: var(--ink-100);
+}
+.band--edge {
+  border-top: 1px solid var(--stroke-1);
+}
+.band--edge-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: var(--grad-brand-hairline);
+}
+
+/* Section head: index + title + optional trailing slot, over a hairline. */
+.head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-4);
+  margin-bottom: var(--sp-5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+.head::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: var(--grad-brand);
+}
+.head__title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.head__aside {
+  max-width: 34ch;
+  padding-bottom: 0.35em;
+  font-size: var(--fs-small);
+  line-height: 1.65;
+  color: var(--fg-4);
+}
+@media (max-width: 900px) {
+  .head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .head__aside {
+    padding-bottom: 0;
+  }
+}
+
+/* ------------------------------------------------------------------- grids */
+.grid {
+  display: grid;
+  gap: var(--gap, var(--sp-4));
+}
+.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+/* Two-column editorial split: a short left sticky column against a wide right one. */
+.split {
+  display: grid;
+  grid-template-columns: min(320px, 28%) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding: clamp(2.5rem, 4.5vw, 4rem) clamp(1.75rem, 4vw, 3.5rem);
+  margin-block: clamp(2rem, 3.5vw, 3.5rem);
+  background: rgba(13, 16, 17, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--r-xl);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.split::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--grad-brand);
+}
+.split > .stack {
+  position: sticky;
+  top: 110px;
+  align-self: start;
+  z-index: 2;
+  text-align: left;
+  align-items: flex-start;
+}
+
+/* Specific Centered Split Layout for Cricket, Football, Tennis, About, and Casino Pages */
+.cricket-page .split,
+.football-page .split,
+.tennis-page .split,
+.about-page .split,
+.casino-page .split {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: clamp(3rem, 5.5vw, 4.5rem) clamp(1.75rem, 4vw, 3.5rem);
+  margin-block: clamp(2rem, 3.5vw, 3.5rem);
+  scroll-margin-top: 100px;
+  text-align: center;
+}
+.cricket-page .split > .stack,
+.football-page .split > .stack,
+.tennis-page .split > .stack,
+.about-page .split > .stack,
+.casino-page .split > .stack {
+  align-items: center;
+  text-align: center;
+  max-width: 680px;
+  margin-inline: auto;
+  position: static;
+}
+.cricket-page .split > div:last-child,
+.football-page .split > div:last-child,
+.tennis-page .split > div:last-child,
+.about-page .split > div:last-child,
+.casino-page .split > div:last-child {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+}
+.split--even {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.split--lead {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+}
+.split--art {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap, var(--sp-5));
+}
+.stack--sm {
+  --gap: var(--sp-3);
+}
+.stack--lg {
+  --gap: var(--sp-7);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap, var(--sp-4));
+}
+
+.center {
+  text-align: center;
+}
+.center .prose,
+.center .t-lede,
+.center .t-body {
+  margin-inline: auto;
+}
+.center .eyebrow {
+  justify-content: center;
+}
+
+/* ------------------------------------------------------------------- rules */
+.rule {
+  height: 1px;
+  border: 0;
+  background: var(--grad-hairline);
+}
+.rule--brand {
+  background: var(--grad-brand-hairline);
+}
+.rule--flat {
+  background: var(--stroke-1);
+}
+
+/* Faint structural grid, drawn as background lines. Adds the sense of an
+   underlying system without being decoration. */
+.gridlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(90deg, var(--stroke-1) 1px, transparent 1px);
+  background-size: calc(100% / 6) 100%;
+  mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
+  opacity: 0.85;
+  z-index: 0;
+}
+
+/* The block body is a reading column. Allow 3 columns on wide screens, step down to 2 on medium screens. */
+@media (min-width: 1100px) {
+  .block__body .cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1099px) {
+  .block__body .cols-3,
+  .block__body .cols-4,
+  .block__body .cols-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------- responsive */
+@media (max-width: 1080px) {
+  .cols-5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .split,
+  .split--even,
+  .split--lead,
+  .split--art {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-7);
+  }
+  .cols-3,
+  .cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .cols-2,
+  .cols-3,
+  .cols-4,
+  .cols-5 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .head {
+    margin-bottom: var(--sp-6);
+  }
+}
