@@ -310,17 +310,11 @@
   .block__body .cols-5 {
     grid-template-columns: minmax(0, 1fr);
   }
-  /* Tiles hold a two-up grid on a phone where a card carrying body copy would
-     not — they are a short label and an index, nothing else. Stacking nine of
-     them one per row made those sections three screens long for no gain.
-
-     The `:not(:has(p))` matters: Tile takes an optional note, and the odds
-     pages use it. Two-up those become a 158px column holding a paragraph —
-     476px tall. Keyed on the content rather than the column class, so feature
-     and account cards stay stacked too. */
-  .grid:has(> .tile):not(:has(> .tile p)) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--sp-3);
+  /* Tiles hold a clean, compact two-up (2x2) grid on mobile */
+  .grid:has(> .tile),
+  .grid:has(> .card.tile) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem;
   }
   .head {
     margin-bottom: var(--sp-6);

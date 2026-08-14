@@ -1,6 +1,6 @@
 import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
-import { ArtFootball } from "@/components/Art";
+import Football3D from "@/components/Football3D";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
 import {
   Block,
@@ -200,7 +200,7 @@ export default function FootballBettingPage() {
         title="Football Betting Online"
         sub="Follow your favourite teams, leagues and competitions in one place."
         lean="g"
-        art={<ArtFootball />}
+        art={<Football3D />}
         actions={
           <>
             <Btn href="/#register" variant="primary" magnetic>

@@ -1,6 +1,6 @@
 import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
-import { ArtBasketball } from "@/components/Art";
+import Basketball3D from "@/components/Basketball3D";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
 import {
   Block,
@@ -154,7 +154,7 @@ export default function BasketballBettingPage() {
         title="Basketball Betting Online"
         sub="Access a wide range of markets across popular basketball games and competitions."
         lean="o"
-        art={<ArtBasketball />}
+        art={<Basketball3D />}
         actions={
           <>
             <Btn href="/#register" variant="primary" magnetic>

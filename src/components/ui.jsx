@@ -130,8 +130,10 @@ export function Steps({ items, rail }) {
 export function Feature({ icon, title, body, lean }) {
   return (
     <article className={cx("card feature", lean === "g" && "feature--g")}>
-      <span className="feature__mark">{icon}</span>
-      <h3 className="t-h4">{title}</h3>
+      <div className="feature__header">
+        <span className="feature__mark">{icon}</span>
+        <h3 className="t-h4">{title}</h3>
+      </div>
       <p className="t-small">{body}</p>
     </article>
   );

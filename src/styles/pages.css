@@ -26,9 +26,9 @@
   position: relative;
   z-index: var(--z-content);
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-  align-items: end;
-  gap: clamp(2rem, 6vw, 5rem);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
   width: 100%;
 }
 .page-hero__copy {
@@ -73,9 +73,11 @@
 }
 .page-hero__art {
   position: relative;
-  justify-self: end;
-  width: min(320px, 40vw);
-  aspect-ratio: 1;
+  justify-self: center;
+  width: 100%;
+  max-width: 720px;
+  height: 500px;
+  min-height: 440px;
   color: var(--o-500);
 }
 .page-hero__art svg {
@@ -104,7 +106,13 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .page-hero__art {
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: min(350px, 92vw);
+    height: 330px;
+    margin: 1.5rem auto 0;
+    justify-self: center;
   }
   .page-hero {
     min-height: auto;

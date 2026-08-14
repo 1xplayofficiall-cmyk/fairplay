@@ -84,9 +84,10 @@
   position: relative;
   display: grid;
   place-items: center;
+  justify-items: center;
+  margin-inline: auto;
 }
 /* Halo behind the device.
-
    Sized to the device rather than 118% of it. At 118% the box ran 56px past
    the gutter on a phone, and an absolutely-positioned element still extends
    the document's scrollable width even though it takes no space in layout —
@@ -108,7 +109,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .app-block__device {
-    justify-items: start;
+    justify-items: center;
+    margin-inline: auto;
   }
 }
 

@@ -304,7 +304,7 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ======================================================== APP ==== */}
+     
       <Section id="download" band="raise">
         <div className="app-block">
           <div className="app-block__device" data-speed="0.94">

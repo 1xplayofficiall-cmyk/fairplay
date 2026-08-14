@@ -1,6 +1,6 @@
 import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
-import { ArtTennis } from "@/components/Art";
+import Tennis3D from "@/components/Tennis3D";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
 import {
   Block,
@@ -212,7 +212,7 @@ export default function TennisBettingPage() {
         title="Tennis Betting Online"
         sub="Follow major tennis tournaments, players, and matches with tennis betting online."
         lean="g"
-        art={<ArtTennis />}
+        art={<Tennis3D />}
         actions={
           <>
             <Btn href="/#register" variant="primary" magnetic>
