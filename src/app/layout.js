@@ -107,7 +107,7 @@ export default function RootLayout({ children }) {
 
         <span className="grain" aria-hidden="true" />
         <ScrollProgress />
-        <Preloader />
+        
         <Header />
 
         {/* ScrollSmoother drives this pair. Both exist unconditionally so the
