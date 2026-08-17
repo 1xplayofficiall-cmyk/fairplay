@@ -12,7 +12,7 @@
    ========================================================================== */
 
 export const SITE = {
-  url: "https://fair-play.co",
+  url: "https://www.fair-play.co",
   name: "FairPlay",
   locale: "en_IN",
   language: "en-IN",

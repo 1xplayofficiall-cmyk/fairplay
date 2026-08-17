@@ -38,7 +38,7 @@ export default function Image() {
             color: "rgba(246,248,247,0.62)",
           }}
         >
-          fair-play.co
+          www.fair-play.co
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
