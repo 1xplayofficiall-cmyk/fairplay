@@ -6,20 +6,14 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export default function Football3D({
   className = "",
-  netModelPath = "/models/football_net.glb",
   ballModelPath = "/models/football.glb",
   interactive = true,
   scaleMultiplier = 1,
-  // Share of the visible frame the goal is allowed to span. Sizing the net
-  // against the camera frustum instead of fixed world units is what stops it
-  // being cut off on wide-but-short hero slots.
-  netFill = 0.5,
 }) {
   const containerRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [isGoalScored, setIsGoalScored] = useState(false);
-  const [netCoords, setNetCoords] = useState({ rotX: 0, rotY: -16, zoom: 3.8 });
+  const [isShotScored, setIsShotScored] = useState(false);
   const replayShootRef = useRef(null);
   const resetViewRef = useRef(null);
 
@@ -33,14 +27,13 @@ export default function Football3D({
     // Scene
     const scene = new THREE.Scene();
 
-    // Camera setup. Measured off the rect so the very first frame uses the
-    // real box rather than a fallback that would render at the wrong aspect.
+    // Camera setup
     const initialRect = container.getBoundingClientRect();
     const width = Math.round(initialRect.width) || 440;
     const height = Math.round(initialRect.height) || 440;
     const FOV = 45;
     const camera = new THREE.PerspectiveCamera(FOV, width / height, 0.1, 100);
-    camera.position.set(0, 0.1, 3.8);
+    camera.position.set(0, 0.2, 4.0);
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -51,7 +44,7 @@ export default function Football3D({
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.3;
+    renderer.toneMappingExposure = 1.35;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
 
@@ -60,53 +53,85 @@ export default function Football3D({
     scene.add(ambientLight);
 
     const mainStadiumLight = new THREE.DirectionalLight(0xffffff, 2.8);
-    mainStadiumLight.position.set(5, 7, 5);
+    mainStadiumLight.position.set(5, 8, 5);
     scene.add(mainStadiumLight);
 
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1.8);
-    fillLight.position.set(-5, 6, 4);
+    const fillLight = new THREE.DirectionalLight(0xccffdd, 1.6);
+    fillLight.position.set(-5, 5, 4);
     scene.add(fillLight);
 
     // FairPlay Orange Stadium Rim Light
-    const orangeRim = new THREE.DirectionalLight(0xff8c00, 3.5);
-    orangeRim.position.set(-6, 4, -2);
+    const orangeRim = new THREE.DirectionalLight(0xff8c00, 3.6);
+    orangeRim.position.set(-6, 5, -2);
     scene.add(orangeRim);
 
     // FairPlay Green Stadium Accent Light
     const greenAccent = new THREE.DirectionalLight(0x00c853, 3.2);
-    greenAccent.position.set(6, -3, -1);
+    greenAccent.position.set(6, -2, -1);
     scene.add(greenAccent);
 
-    // Bottom Goal Line Glow
-    const goalLineLight = new THREE.PointLight(0x00c853, 1.6, 8);
-    goalLineLight.position.set(0, -1.5, -0.4);
-    scene.add(goalLineLight);
+    // Bottom Pitch Glow
+    const pitchGlowLight = new THREE.PointLight(0x00c853, 1.8, 8);
+    pitchGlowLight.position.set(0, -1.2, 0);
+    scene.add(pitchGlowLight);
 
     // =========================================================================
-    // MAIN INTERACTIVE STAGE (DRAGGABLE NET + BALL TOGETHER)
+    // MAIN INTERACTIVE STAGE (DRAGGABLE 3D FOOTBALL + PITCH)
     // =========================================================================
     const stageGroup = new THREE.Group();
     scene.add(stageGroup);
 
-    const netGroup = new THREE.Group();
-    stageGroup.add(netGroup);
-
     const ballContainer = new THREE.Group();
     stageGroup.add(ballContainer);
 
-    // Initial default orientation for the custom net model
-    const DEFAULT_ROT_X = 0.02;
-    const DEFAULT_ROT_Y = -0.28;
-    const DEFAULT_ZOOM = 3.8;
+    // Pitch Ground Grid (Football Grass Geometry)
+    const pitchGeom = new THREE.PlaneGeometry(5.8, 4.4, 14, 14);
+    const pitchMat = new THREE.MeshBasicMaterial({
+      color: 0x082613,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.4,
+    });
+    const pitchMesh = new THREE.Mesh(pitchGeom, pitchMat);
+    pitchMesh.rotation.x = -Math.PI / 2;
+    pitchMesh.position.set(0, -1.3, 0);
+    stageGroup.add(pitchMesh);
+
+    // Center Circle / Penalty Spot Glow Ring
+    const spotRingGeom = new THREE.RingGeometry(1.6, 1.65, 48);
+    const spotRingMat = new THREE.MeshBasicMaterial({
+      color: 0x00c853,
+      transparent: true,
+      opacity: 0.35,
+      side: THREE.DoubleSide,
+    });
+    const spotRingMesh = new THREE.Mesh(spotRingGeom, spotRingMat);
+    spotRingMesh.rotation.x = -Math.PI / 2;
+    spotRingMesh.position.set(0, -1.29, 0);
+    stageGroup.add(spotRingMesh);
+
+    // Center Spot
+    const centerSpotGeom = new THREE.CircleGeometry(0.12, 32);
+    const centerSpotMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.6,
+      side: THREE.DoubleSide,
+    });
+    const centerSpotMesh = new THREE.Mesh(centerSpotGeom, centerSpotMat);
+    centerSpotMesh.rotation.x = -Math.PI / 2;
+    centerSpotMesh.position.set(0, -1.28, 0);
+    stageGroup.add(centerSpotMesh);
+
+    // Default Orientation
+    const DEFAULT_ROT_X = 0.08;
+    const DEFAULT_ROT_Y = -0.22;
+    const DEFAULT_ZOOM = 4.0;
 
     let targetRotX = DEFAULT_ROT_X;
     let targetRotY = DEFAULT_ROT_Y;
     let currentRotX = DEFAULT_ROT_X;
     let currentRotY = DEFAULT_ROT_Y;
-    let targetPanX = 0;
-    let targetPanY = 0;
-    let currentPanX = 0;
-    let currentPanY = 0;
     let targetZoom = DEFAULT_ZOOM;
 
     stageGroup.rotation.x = DEFAULT_ROT_X;
@@ -116,33 +141,46 @@ export default function Football3D({
     resetViewRef.current = () => {
       targetRotX = DEFAULT_ROT_X;
       targetRotY = DEFAULT_ROT_Y;
-      targetPanX = 0;
-      targetPanY = 0;
       targetZoom = DEFAULT_ZOOM;
     };
 
-    // Celebration Particles
-    const particleCount = 45;
+    // =========================================================================
+    // TURF / SHOT CELEBRATION PARTICLES
+    // =========================================================================
+    const particleCount = 50;
     const particleGeom = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
+    const particleColors = new Float32Array(particleCount * 3);
     const particleVelocities = [];
+
+    const greenCol = new THREE.Color(0x00c853);
+    const orangeCol = new THREE.Color(0xff8c00);
+    const whiteCol = new THREE.Color(0xffffff);
 
     for (let i = 0; i < particleCount; i++) {
       particlePositions[i * 3] = 0;
       particlePositions[i * 3 + 1] = 0;
-      particlePositions[i * 3 + 2] = -1.0;
+      particlePositions[i * 3 + 2] = 0;
+
+      const c = i % 3 === 0 ? greenCol : i % 3 === 1 ? orangeCol : whiteCol;
+      particleColors[i * 3] = c.r;
+      particleColors[i * 3 + 1] = c.g;
+      particleColors[i * 3 + 2] = c.b;
+
       particleVelocities.push({
-        x: (Math.random() - 0.5) * 0.1,
-        y: (Math.random() - 0.2) * 0.1,
-        z: (Math.random() - 0.3) * 0.08,
+        x: (Math.random() - 0.5) * 0.14,
+        y: Math.random() * 0.16 + 0.04,
+        z: (Math.random() - 0.5) * 0.14,
         life: 0,
       });
     }
+
     particleGeom.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+    particleGeom.setAttribute("color", new THREE.BufferAttribute(particleColors, 3));
 
     const particleMat = new THREE.PointsMaterial({
-      color: 0x00c853,
-      size: 0.09,
+      size: 0.08,
+      vertexColors: true,
       transparent: true,
       opacity: 0,
       blending: THREE.AdditiveBlending,
@@ -150,278 +188,74 @@ export default function Football3D({
     const particleSystem = new THREE.Points(particleGeom, particleMat);
     stageGroup.add(particleSystem);
 
-    // Shot parameters
+    // =========================================================================
+    // STRIKE / SHOT ANIMATION
+    // =========================================================================
     let shotStartTime = null;
-    let shotDuration = 1.3;
-    let isFlying = false;
-
-    // Positions below are the hand-tuned layout for a goal 4.8 world units
-    // wide. Everything is re-derived from that reference by `fit()`, so the
-    // whole composition scales as one instead of drifting apart.
-    const REFERENCE_NET_WIDTH = 4.8;
-    const startPos = new THREE.Vector3(0, -2.8, 3.6);
-    const targetPos = new THREE.Vector3(-0.05, -0.05, -0.5);
-    const reboundPos = new THREE.Vector3(-0.05, -0.05, -0.25);
+    let shotDuration = 2.2; // seconds
+    let isShooting = false;
 
     const triggerShotAnimation = () => {
       shotStartTime = performance.now();
-      isFlying = true;
-      setIsGoalScored(false);
-      ballContainer.position.copy(startPos);
-      ballContainer.scale.setScalar(0.7);
+      isShooting = true;
+      setIsShotScored(false);
+
+      // Trigger turf burst
+      particleMat.opacity = 1;
+      for (let i = 0; i < particleCount; i++) {
+        const pos = particleGeom.attributes.position.array;
+        pos[i * 3] = ballContainer.position.x;
+        pos[i * 3 + 1] = ballContainer.position.y - 0.8;
+        pos[i * 3 + 2] = ballContainer.position.z;
+        particleVelocities[i].life = 1.0;
+      }
+      particleGeom.attributes.position.needsUpdate = true;
     };
 
     replayShootRef.current = triggerShotAnimation;
 
-    // =========================================================================
-    // VIEWPORT FIT
-    // The goal is sized against what the camera can actually see, so a short
-    // wide hero slot gets a smaller net rather than one clipped at the edges.
-    // =========================================================================
-    let netRoot = null;
-    let netModelSize = null;
-    let netModelCenter = null;
-    let netHull = [];
-    let frameOffsetX = 0;
-    let frameOffsetY = 0;
-    let ballRoot = null;
-    let ballModelMaxDim = 1;
-    let ballModelCenter = null;
-
-    // Place the goal for a given scale. `k` is how the fitted goal compares to
-    // the 4.8-unit layout every other offset was tuned against.
-    const netCentreOffset = new THREE.Vector3();
-    const placeNet = (scale) => {
-      // Longest axis, not x: this model's width runs along its local z.
-      const longest = Math.max(netModelSize.x, netModelSize.y, netModelSize.z);
-      const k = (longest * scale) / REFERENCE_NET_WIDTH;
-      netRoot.scale.setScalar(scale);
-      // The centre was measured in the net's local frame, but `position` is in
-      // the parent's — and this model's root carries a rotation, so the offset
-      // has to be rotated across or the goal ends up skewed out of frame.
-      netCentreOffset
-        .copy(netModelCenter)
-        .multiplyScalar(scale)
-        .applyQuaternion(netRoot.quaternion);
-      netRoot.position.set(
-        -netCentreOffset.x - 0.1 * k,
-        -netCentreOffset.y - 0.05 * k,
-        -netCentreOffset.z - 0.6 * k
-      );
-      return k;
-    };
-
-    // Screen-space box the goal occupies, in NDC. Measured rather than derived:
-    // this model's netting tails 6 units backwards, so its bounding box says
-    // nothing useful about how wide it lands on screen.
-    const scratch = new THREE.Vector3();
-    const projectedBounds = () => {
-      stageGroup.updateMatrixWorld(true);
-      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      for (const point of netHull) {
-        scratch.copy(point).applyMatrix4(netRoot.matrixWorld).project(camera);
-        minX = Math.min(minX, scratch.x);
-        maxX = Math.max(maxX, scratch.x);
-        minY = Math.min(minY, scratch.y);
-        maxY = Math.max(maxY, scratch.y);
-      }
-      return { minX, maxX, minY, maxY };
-    };
-
-    // NDC spans -1..1, so half the delta is the fraction of the frame used.
-    const spanOf = (b) => Math.max((b.maxX - b.minX) / 2, (b.maxY - b.minY) / 2);
-
-    const fit = () => {
-      if (!netRoot || !netModelSize || !netHull.length) return;
-
-      // Measure at the default angle and with panning zeroed, so the fit frames
-      // the resting composition rather than chasing wherever the user dragged it.
-      const liveRotX = stageGroup.rotation.x;
-      const liveRotY = stageGroup.rotation.y;
-      const livePos = stageGroup.position.clone();
-      stageGroup.rotation.set(DEFAULT_ROT_X, DEFAULT_ROT_Y, 0);
-      stageGroup.position.set(0, 0, 0);
-
-      // Bisection, not proportional stepping: the projected size grows faster
-      // than the scale does (the goal is deep, so its near edge swings towards
-      // the camera as it grows), and dividing by the overshoot just oscillates.
-      const spanAt = (candidate) => {
-        placeNet(candidate);
-        return spanOf(projectedBounds());
-      };
-
-      let low = 0;
-      let high =
-        netRoot.scale.x ||
-        REFERENCE_NET_WIDTH / (Math.max(netModelSize.x, netModelSize.y, netModelSize.z) || 1);
-      let guard = 0;
-      while (spanAt(high) < netFill && guard++ < 12) {
-        low = high;
-        high *= 2;
-      }
-      for (let pass = 0; pass < 18; pass++) {
-        const mid = (low + high) / 2;
-        if (spanAt(mid) > netFill) high = mid;
-        else low = mid;
-      }
-      const k = placeNet(low);
-
-      // Centre what is actually on screen. The goal's deep netting throws its
-      // bounding-box centre well off the visible middle, which is what left it
-      // hanging past the right edge.
-      const bounds = projectedBounds();
-      const centreX = (bounds.minX + bounds.maxX) / 2;
-      const centreY = (bounds.minY + bounds.maxY) / 2;
-      const PROBE = 0.2;
-      stageGroup.position.set(PROBE, PROBE, 0);
-      const probed = projectedBounds();
-      const slopeX = ((probed.minX + probed.maxX) / 2 - centreX) / PROBE;
-      const slopeY = ((probed.minY + probed.maxY) / 2 - centreY) / PROBE;
-      // A stage shift moves the content in camera space without changing depth,
-      // so the projected centre is linear in it: one step lands it exactly.
-      frameOffsetX = slopeX ? -centreX / slopeX : 0;
-      frameOffsetY = slopeY ? -centreY / slopeY : 0;
-
-      stageGroup.rotation.set(liveRotX, liveRotY, 0);
-      stageGroup.position.copy(livePos);
-      stageGroup.updateMatrixWorld(true);
-
-      startPos.set(0, -2.8 * k, 3.6 * k);
-      targetPos.set(-0.05 * k, -0.05 * k, -0.5 * k);
-      reboundPos.set(-0.05 * k, -0.05 * k, -0.25 * k);
-
-      if (ballRoot) {
-        // Ball stays in proportion to the goal at every size.
-        const ballScale = ((0.8 * k) / (ballModelMaxDim || 1)) * scaleMultiplier;
-        ballRoot.scale.setScalar(ballScale);
-        ballRoot.position.set(
-          -ballModelCenter.x * ballScale,
-          -ballModelCenter.y * ballScale,
-          -ballModelCenter.z * ballScale
-        );
-      }
-    };
-
-    // Load Models
+    // Load 3D Football Model
     const loader = new GLTFLoader();
-    let netLoaded = false;
-    let ballLoaded = false;
-
-    const checkBothLoaded = () => {
-      if (netLoaded && ballLoaded && !isDisposed) {
-        setLoading(false);
-        triggerShotAnimation();
-      }
-    };
-
-    // 1. Load 3D Goal Net Model
-    loader.load(
-      netModelPath,
-      (gltf) => {
-        if (isDisposed) return;
-        netRoot = gltf.scene;
-
-        // Collect the goal's corner points in the net's own local space. Doing
-        // the measuring here — rather than with a Box3 in whatever frame the
-        // glTF root happens to carry — keeps sizing and centring honest even
-        // though the loader overwrites that root's transform below.
-        netRoot.updateMatrixWorld(true);
-        const toNetLocal = new THREE.Matrix4().copy(netRoot.matrixWorld).invert();
-        const meshSamples = [];
-
-        netRoot.traverse((child) => {
-          if (child.isMesh && child.geometry?.attributes?.position) {
-            // Sampled vertices, not per-mesh bounding boxes: a box around
-            // draped netting is far bigger than the netting, and the fit would
-            // shrink the goal to keep empty space on screen.
-            const position = child.geometry.attributes.position;
-            const stride = Math.max(1, Math.ceil(position.count / 300));
-            const points = [];
-            for (let i = 0; i < position.count; i += stride) {
-              points.push(
-                new THREE.Vector3()
-                  .fromBufferAttribute(position, i)
-                  .applyMatrix4(child.matrixWorld)
-                  .applyMatrix4(toNetLocal)
-              );
-            }
-            if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
-            meshSamples.push({
-              points,
-              reach: child.geometry.boundingBox.getSize(new THREE.Vector3()).length(),
-            });
-          }
-          if (child.isMesh && child.material) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            if (Array.isArray(child.material)) {
-              child.material.forEach((mat) => {
-                mat.side = THREE.DoubleSide;
-                mat.depthWrite = true;
-              });
-            } else {
-              child.material.side = THREE.DoubleSide;
-              child.material.depthWrite = true;
-            }
-          }
-        });
-
-        // Frame on the goal, ignoring parts authored at a wildly different
-        // scale. This asset carries a 48-unit cylinder next to ~3-unit goal
-        // pieces; it sits near the camera and projects taller than the goal
-        // itself, so including it shrinks the goal to frame a stray post.
-        const reaches = meshSamples.map((m) => m.reach).sort((a, b) => a - b);
-        const medianReach = reaches[Math.floor(reaches.length / 2)] || 0;
-        const keep =
-          meshSamples.length > 2 && medianReach > 0
-            ? meshSamples.filter((m) => m.reach <= medianReach * 4)
-            : meshSamples;
-        netHull = keep.flatMap((m) => m.points);
-
-        const netBox = new THREE.Box3().setFromPoints(netHull);
-        netModelCenter = netBox.getCenter(new THREE.Vector3());
-        netModelSize = netBox.getSize(new THREE.Vector3());
-
-        netGroup.add(netRoot);
-        fit();
-        netLoaded = true;
-        checkBothLoaded();
-      },
-      undefined,
-      (err) => {
-        console.error("Error loading goal net model:", err);
-        netLoaded = true;
-        checkBothLoaded();
-      }
-    );
-
-    // 2. Load 3D Football Model
     loader.load(
       ballModelPath,
       (gltf) => {
         if (isDisposed) return;
-        ballRoot = gltf.scene;
+        const ballRoot = gltf.scene;
 
         const ballBox = new THREE.Box3().setFromObject(ballRoot);
         const ballSize = ballBox.getSize(new THREE.Vector3());
-        ballModelCenter = ballBox.getCenter(new THREE.Vector3());
-        ballModelMaxDim = Math.max(ballSize.x, ballSize.y, ballSize.z);
+        const center = ballBox.getCenter(new THREE.Vector3());
+        const maxDim = Math.max(ballSize.x, ballSize.y, ballSize.z);
+
+        // Center ball around its origin
+        ballRoot.position.x = -center.x;
+        ballRoot.position.y = -center.y;
+        ballRoot.position.z = -center.z;
+
+        // Scale ball to prominent hero size
+        const targetScale = (2.4 / (maxDim || 1)) * scaleMultiplier;
+        ballContainer.scale.setScalar(targetScale);
 
         ballRoot.traverse((child) => {
           if (child.isMesh && child.material) {
             child.castShadow = true;
             child.receiveShadow = true;
             if (child.material.isMeshStandardMaterial || child.material.isMeshPhysicalMaterial) {
-              child.material.roughness = Math.min(child.material.roughness, 0.65);
+              child.material.roughness = Math.min(child.material.roughness, 0.55);
               child.material.envMapIntensity = 1.3;
             }
           }
         });
 
         ballContainer.add(ballRoot);
-        fit();
-        ballLoaded = true;
-        checkBothLoaded();
+        setLoading(false);
+
+        // Initial entrance strike
+        setTimeout(() => {
+          if (!isDisposed) {
+            triggerShotAnimation();
+          }
+        }, 300);
       },
       undefined,
       (err) => {
@@ -434,54 +268,44 @@ export default function Football3D({
     );
 
     // =========================================================================
-    // INTERACTIVE DRAGGING (ROTATION + PAN + ZOOM ON NET & BALL)
+    // INTERACTION DRAGGING (MOUSE & TOUCH)
     // =========================================================================
     let isDragging = false;
-    let isPanning = false;
-    let previousPointerPosition = { x: 0, y: 0 };
-    let velocity = { x: 0, y: 0 };
+    let prevPointerX = 0;
+    let prevPointerY = 0;
+    let userInteracted = false;
+    let idleFloatTime = 0;
 
     const handlePointerDown = (e) => {
       if (!interactive) return;
       isDragging = true;
-      isPanning = e.button === 2 || e.shiftKey; // Right-click or Shift+drag for pan
-      const clientX = e.clientX || (e.touches && e.touches[0]?.clientX) || 0;
-      const clientY = e.clientY || (e.touches && e.touches[0]?.clientY) || 0;
-      previousPointerPosition = { x: clientX, y: clientY };
+      userInteracted = true;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      prevPointerX = clientX;
+      prevPointerY = clientY;
     };
 
     const handlePointerMove = (e) => {
       if (!isDragging || !interactive) return;
-      const clientX = e.clientX || (e.touches && e.touches[0]?.clientX) || 0;
-      const clientY = e.clientY || (e.touches && e.touches[0]?.clientY) || 0;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-      const deltaX = clientX - previousPointerPosition.x;
-      const deltaY = clientY - previousPointerPosition.y;
+      const deltaX = clientX - prevPointerX;
+      const deltaY = clientY - prevPointerY;
 
-      if (isPanning) {
-        // Pan stage
-        targetPanX += deltaX * 0.005;
-        targetPanY -= deltaY * 0.005;
-      } else {
-        // Rotate net & ball in 3D
-        velocity = {
-          x: deltaY * 0.006,
-          y: deltaX * 0.006,
-        };
+      targetRotY += deltaX * 0.008;
+      targetRotX += deltaY * 0.008;
 
-        targetRotX += velocity.x;
-        targetRotY += velocity.y;
+      // Clamp vertical tilt
+      targetRotX = Math.max(-Math.PI / 2.5, Math.min(Math.PI / 2.5, targetRotX));
 
-        // Clamp vertical tilt to avoid flipping upside down
-        targetRotX = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, targetRotX));
-      }
-
-      previousPointerPosition = { x: clientX, y: clientY };
+      prevPointerX = clientX;
+      prevPointerY = clientY;
     };
 
     const handlePointerUp = () => {
       isDragging = false;
-      isPanning = false;
     };
 
     // Zoom with scroll wheel
@@ -489,177 +313,128 @@ export default function Football3D({
       if (!interactive) return;
       e.preventDefault();
       targetZoom += e.deltaY * 0.003;
-      targetZoom = Math.max(1.8, Math.min(6.5, targetZoom));
+      targetZoom = Math.max(2.2, Math.min(5.5, targetZoom));
     };
 
     const domElement = renderer.domElement;
-    domElement.style.touchAction = "none";
-    domElement.style.cursor = interactive ? "grab" : "default";
-
     domElement.addEventListener("mousedown", handlePointerDown);
     window.addEventListener("mousemove", handlePointerMove);
     window.addEventListener("mouseup", handlePointerUp);
-    domElement.addEventListener("wheel", handleWheel, { passive: false });
 
     domElement.addEventListener("touchstart", handlePointerDown, { passive: true });
     window.addEventListener("touchmove", handlePointerMove, { passive: true });
     window.addEventListener("touchend", handlePointerUp);
+    domElement.addEventListener("wheel", handleWheel, { passive: false });
 
-    domElement.addEventListener("contextmenu", (e) => e.preventDefault());
-
-    domElement.addEventListener("mousedown", () => {
-      domElement.style.cursor = "grabbing";
-    });
-    window.addEventListener("mouseup", () => {
-      domElement.style.cursor = interactive ? "grab" : "default";
-    });
-
-    // Resize Observer. The hero slot settles late (fonts, ScrollSmoother), so
-    // the fit is redone on every size change rather than only at load.
-    let lastW = width;
-    let lastH = height;
-
-    const applySize = (newW, newH) => {
-      if (newW <= 0 || newH <= 0) return;
-      if (Math.abs(newW - lastW) < 1 && Math.abs(newH - lastH) < 1) return;
-      lastW = newW;
-      lastH = newH;
-      camera.aspect = newW / newH;
+    // Resize Handler
+    const handleResize = () => {
+      if (!container || !renderer || !camera) return;
+      const rect = container.getBoundingClientRect();
+      const w = Math.round(rect.width) || 440;
+      const h = Math.round(rect.height) || 440;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(newW, newH);
-      fit();
+      renderer.setSize(w, h);
     };
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width: newW, height: newH } = entry.contentRect;
-        applySize(newW, newH);
-      }
-    });
-    resizeObserver.observe(container);
-
-    // Catch a layout that lands after mount but before the observer settles.
-    const settleFrame = requestAnimationFrame(() => {
-      const rect = container.getBoundingClientRect();
-      applySize(rect.width, rect.height);
-    });
+    window.addEventListener("resize", handleResize);
 
     // =========================================================================
-    // ANIMATION & DRAG UPDATE LOOP
+    // RENDER ANIMATION LOOP
     // =========================================================================
-    const clock = new THREE.Clock();
-    let lastCoordUpdateTime = 0;
+    let lastTime = performance.now();
 
-    const animate = () => {
+    const animate = (currentTime) => {
+      if (isDisposed) return;
       animationFrameId = requestAnimationFrame(animate);
 
-      const elapsedTime = clock.getElapsedTime();
+      const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
+      lastTime = currentTime;
 
-      // Smooth damping interpolation
-      currentRotX += (targetRotX - currentRotX) * 0.12;
-      currentRotY += (targetRotY - currentRotY) * 0.12;
-      currentPanX += (targetPanX - currentPanX) * 0.12;
-      currentPanY += (targetPanY - currentPanY) * 0.12;
-      camera.position.z += (targetZoom - camera.position.z) * 0.1;
+      // Smooth Stage Rotation Damping
+      currentRotX += (targetRotX - currentRotX) * 0.08;
+      currentRotY += (targetRotY - currentRotY) * 0.08;
 
-      // Apply drag rotation and pan to whole stage (Net + Ball)
       stageGroup.rotation.x = currentRotX;
       stageGroup.rotation.y = currentRotY;
-      stageGroup.position.x = frameOffsetX + currentPanX;
-      stageGroup.position.y = frameOffsetY + currentPanY;
 
-      // Update UI readout throttled
-      if (performance.now() - lastCoordUpdateTime > 200) {
-        lastCoordUpdateTime = performance.now();
-        setNetCoords({
-          rotX: Math.round((currentRotX * 180) / Math.PI),
-          rotY: Math.round((currentRotY * 180) / Math.PI),
-          zoom: Math.round(camera.position.z * 10) / 10,
-        });
+      // Camera distance damping
+      camera.position.z += (targetZoom - camera.position.z) * 0.08;
+      camera.lookAt(0, 0.1, 0);
+
+      // Idle Floating Motion when not dragging
+      if (!isDragging && !userInteracted && !isShooting) {
+        idleFloatTime += dt;
+        ballContainer.position.y = Math.sin(idleFloatTime * 1.5) * 0.08;
+        ballContainer.rotation.y += 0.006;
+        ballContainer.rotation.x = Math.sin(idleFloatTime * 0.8) * 0.05;
       }
 
-      // Shot Animation Progress
-      if (isFlying && shotStartTime !== null) {
-        const elapsedShot = (performance.now() - shotStartTime) / 1000;
-        const progress = Math.min(elapsedShot / shotDuration, 1);
+      // Dynamic Strike / Curve Shot Trajectory
+      if (isShooting && shotStartTime) {
+        const elapsed = (currentTime - shotStartTime) / 1000;
+        const progress = Math.min(elapsed / shotDuration, 1.0);
 
-        const ease =
-          progress < 0.5
-            ? 4 * progress * progress * progress
-            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        if (progress < 1.0) {
+          // Powerful curved kick arc
+          const t = progress;
+          // Arc up, out, curve, and return
+          const curveX = Math.sin(t * Math.PI) * 0.8;
+          const curveY = Math.sin(t * Math.PI) * 0.7 - Math.pow(t, 2) * 0.1;
+          const curveZ = -Math.sin(t * Math.PI) * 1.2;
 
-        const currentX = THREE.MathUtils.lerp(startPos.x, targetPos.x, ease);
-        const currentY = THREE.MathUtils.lerp(startPos.y, targetPos.y, ease) + Math.sin(progress * Math.PI) * 0.45;
-        const currentZ = THREE.MathUtils.lerp(startPos.z, targetPos.z, ease);
+          ballContainer.position.set(curveX, curveY, curveZ);
 
-        ballContainer.position.set(currentX, currentY, currentZ);
-
-        const currentScale = THREE.MathUtils.lerp(0.7, 1.0, ease);
-        ballContainer.scale.setScalar(currentScale);
-
-        // Spin ball while flying
-        ballContainer.rotation.x += 0.2;
-        ballContainer.rotation.y += 0.25;
-
-        if (progress >= 1) {
-          isFlying = false;
-          setIsGoalScored(true);
-
-          particleMat.opacity = 0.9;
-          for (let i = 0; i < particleCount; i++) {
-            particlePositions[i * 3] = targetPos.x;
-            particlePositions[i * 3 + 1] = targetPos.y;
-            particlePositions[i * 3 + 2] = -1.2;
-            particleVelocities[i].life = 1.0;
-          }
-          particleGeom.attributes.position.needsUpdate = true;
+          // Fast topspin & sidespin
+          ballContainer.rotation.x += dt * 14 * (1 - t * 0.5);
+          ballContainer.rotation.y += dt * 18 * (1 - t * 0.5);
+        } else {
+          isShooting = false;
+          setIsShotScored(true);
+          ballContainer.position.set(0, 0, 0);
         }
-      } else if (!isDragging) {
-        // Floating inside net
-        const idleFloat = Math.sin(elapsedTime * 1.8) * 0.03;
-        ballContainer.position.x = reboundPos.x;
-        ballContainer.position.y = reboundPos.y + idleFloat;
-        ballContainer.position.z = reboundPos.z;
-
-        // Subtle ball rotation
-        ballContainer.rotation.y += 0.008;
       }
 
-      // Particles decay
-      if (particleMat.opacity > 0.01) {
-        particleMat.opacity *= 0.95;
-        const positions = particleGeom.attributes.position;
+      // Update Particles
+      if (particleMat.opacity > 0) {
+        const positions = particleGeom.attributes.position.array;
+        let anyAlive = false;
+
         for (let i = 0; i < particleCount; i++) {
-          const v = particleVelocities[i];
-          if (v.life > 0) {
-            positions.setX(i, positions.getX(i) + v.x);
-            positions.setY(i, positions.getY(i) + v.y);
-            positions.setZ(i, positions.getZ(i) + v.z);
-            v.life *= 0.95;
+          if (particleVelocities[i].life > 0) {
+            anyAlive = true;
+            particleVelocities[i].life -= dt * 1.2;
+            positions[i * 3] += particleVelocities[i].x;
+            positions[i * 3 + 1] += particleVelocities[i].y;
+            positions[i * 3 + 2] += particleVelocities[i].z;
+            particleVelocities[i].y -= dt * 0.12; // Gravity
           }
         }
-        positions.needsUpdate = true;
+
+        particleGeom.attributes.position.needsUpdate = true;
+        particleMat.opacity = Math.max(0, particleMat.opacity - dt * 0.8);
       }
 
       renderer.render(scene, camera);
     };
 
-    animate();
+    animate(performance.now());
 
+    // Cleanup
     return () => {
       isDisposed = true;
       cancelAnimationFrame(animationFrameId);
-      cancelAnimationFrame(settleFrame);
-      resizeObserver.disconnect();
+
+      window.removeEventListener("resize", handleResize);
 
       domElement.removeEventListener("mousedown", handlePointerDown);
       window.removeEventListener("mousemove", handlePointerMove);
       window.removeEventListener("mouseup", handlePointerUp);
-      domElement.removeEventListener("wheel", handleWheel);
 
       domElement.removeEventListener("touchstart", handlePointerDown);
       window.removeEventListener("touchmove", handlePointerMove);
       window.removeEventListener("touchend", handlePointerUp);
+      domElement.removeEventListener("wheel", handleWheel);
 
       if (container.contains(domElement)) {
         container.removeChild(domElement);
@@ -667,8 +442,16 @@ export default function Football3D({
 
       renderer.dispose();
       scene.clear();
+      pitchGeom.dispose();
+      pitchMat.dispose();
+      spotRingGeom.dispose();
+      spotRingMat.dispose();
+      centerSpotGeom.dispose();
+      centerSpotMat.dispose();
+      particleGeom.dispose();
+      particleMat.dispose();
     };
-  }, [netModelPath, ballModelPath, interactive, scaleMultiplier, netFill]);
+  }, [ballModelPath, interactive, scaleMultiplier]);
 
   return (
     <div
@@ -676,11 +459,11 @@ export default function Football3D({
       style={{
         width: "100%",
         height: "100%",
-        minHeight: "360px",
+        minHeight: "420px",
         position: "relative",
       }}
     >
-      {/* 3D Canvas */}
+      {/* 3D Canvas Mount */}
       <div
         ref={containerRef}
         style={{
@@ -689,6 +472,7 @@ export default function Football3D({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          cursor: "grab",
         }}
       />
 
@@ -702,7 +486,7 @@ export default function Football3D({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            gap: "0.5rem",
+            gap: "0.75rem",
             pointerEvents: "none",
           }}
         >
@@ -711,8 +495,8 @@ export default function Football3D({
               width: "48px",
               height: "48px",
               borderRadius: "50%",
-              border: "2px solid rgba(255, 140, 0, 0.3)",
-              borderTopColor: "var(--o-400, #ff8c00)",
+              border: "2px solid rgba(0, 200, 83, 0.3)",
+              borderTopColor: "#00c853",
               animation: "spin 1s linear infinite",
             }}
           />
@@ -722,10 +506,10 @@ export default function Football3D({
               fontFamily: "var(--font-mono, monospace)",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "var(--fg-4, rgba(255,255,255,0.5))",
+              color: "var(--fg-4, rgba(255,255,255,0.6))",
             }}
           >
-            Loading 3D Stadium...
+            Loading 3D Football Stadium...
           </span>
         </div>
       )}
@@ -743,16 +527,16 @@ export default function Football3D({
             fontSize: "0.85rem",
           }}
         >
-          3D preview unavailable
+          3D football preview unavailable
         </div>
       )}
 
-      {/* Goal Status, Live Orientation & Replay Controls */}
+      {/* Interactive Controls & HUD */}
       {!loading && !error && (
         <div
           style={{
             position: "absolute",
-            bottom: "8px",
+            bottom: "10px",
             left: "50%",
             transform: "translateX(-50%)",
             display: "flex",
@@ -762,36 +546,40 @@ export default function Football3D({
             gap: "8px",
             zIndex: 5,
             width: "95%",
+            maxWidth: "460px",
           }}
         >
           {/* Status Badge */}
           <div
             style={{
-              padding: "5px 12px",
-              background: "rgba(13, 16, 17, 0.85)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              backdropFilter: "blur(10px)",
+              padding: "6px 14px",
+              background: "rgba(13, 16, 17, 0.88)",
+              border: "1px solid rgba(255, 255, 255, 0.14)",
+              backdropFilter: "blur(12px)",
               borderRadius: "999px",
-              fontSize: "0.72rem",
+              fontSize: "0.74rem",
               color: "var(--fg-2, #ffffff)",
               letterSpacing: "0.04em",
               display: "flex",
               alignItems: "center",
-              gap: "6px",
+              gap: "8px",
               whiteSpace: "nowrap",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
             }}
           >
             <span
               style={{
-                width: "7px",
-                height: "7px",
+                width: "8px",
+                height: "8px",
                 borderRadius: "50%",
-                background: isGoalScored ? "var(--g-400, #00c853)" : "var(--o-400, #ff8c00)",
-                boxShadow: isGoalScored ? "0 0 10px #00c853" : "0 0 10px #ff8c00",
+                background: isShotScored ? "var(--g-400, #00c853)" : "var(--o-400, #ff8c00)",
+                boxShadow: isShotScored ? "0 0 10px #00c853" : "0 0 10px #ff8c00",
                 transition: "all 0.3s ease",
               }}
             />
-            {isGoalScored ? "🖐️ Drag to Rotate Net & Ball in 3D" : "Shooting..."}
+            <span style={{ fontWeight: "600" }}>
+              {isShotScored ? "⚽ TOP BINS! Drag Ball in 3D" : "⚽ Striking Football..."}
+            </span>
           </div>
 
           {/* Reset Angle Button */}
@@ -800,13 +588,13 @@ export default function Football3D({
             onClick={() => resetViewRef.current && resetViewRef.current()}
             title="Reset to default angle"
             style={{
-              padding: "5px 10px",
+              padding: "6px 12px",
               background: "rgba(255, 255, 255, 0.08)",
               border: "1px solid rgba(255, 255, 255, 0.15)",
               backdropFilter: "blur(10px)",
               borderRadius: "999px",
-              fontSize: "0.7rem",
-              color: "var(--fg-3, rgba(255,255,255,0.7))",
+              fontSize: "0.72rem",
+              color: "var(--fg-3, rgba(255,255,255,0.75))",
               cursor: "pointer",
               letterSpacing: "0.02em",
               transition: "all 0.2s ease",
@@ -814,27 +602,27 @@ export default function Football3D({
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = "#ffffff";
-              e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.16)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--fg-3, rgba(255,255,255,0.7))";
+              e.currentTarget.style.color = "var(--fg-3, rgba(255,255,255,0.75))";
               e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
             }}
           >
-            Reset Angle ↺
+            Reset ↺
           </button>
 
-          {/* Shoot Again Button */}
+          {/* Strike Ball Button */}
           <button
             type="button"
             onClick={() => replayShootRef.current && replayShootRef.current()}
             style={{
-              padding: "5px 12px",
-              background: "linear-gradient(135deg, rgba(255,140,0,0.25), rgba(0,200,83,0.25))",
-              border: "1px solid rgba(255, 140, 0, 0.4)",
+              padding: "6px 14px",
+              background: "linear-gradient(135deg, rgba(0,200,83,0.35), rgba(255,140,0,0.35))",
+              border: "1px solid rgba(0, 200, 83, 0.6)",
               backdropFilter: "blur(10px)",
               borderRadius: "999px",
-              fontSize: "0.72rem",
+              fontSize: "0.74rem",
               fontWeight: "600",
               color: "var(--fg, #ffffff)",
               cursor: "pointer",
@@ -842,19 +630,21 @@ export default function Football3D({
               transition: "all 0.2s ease",
               display: "flex",
               alignItems: "center",
-              gap: "4px",
+              gap: "5px",
               whiteSpace: "nowrap",
+              boxShadow: "0 0 14px rgba(0,200,83,0.25)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "var(--o-400, #ff8c00)";
-              e.currentTarget.style.transform = "scale(1.05)";
+              e.currentTarget.style.borderColor = "var(--g-400, #00c853)";
+              e.currentTarget.style.transform = "scale(1.04)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255, 140, 0, 0.4)";
+              e.currentTarget.style.borderColor = "rgba(0, 200, 83, 0.6)";
               e.currentTarget.style.transform = "scale(1)";
             }}
           >
-            Shoot Again ⚽
+            <span>Strike Ball</span>
+            <span>⚽</span>
           </button>
         </div>
       )}

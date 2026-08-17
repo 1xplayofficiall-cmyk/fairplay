@@ -1,6 +1,6 @@
 import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
-import { ArtCasino } from "@/components/Art";
+import Casino3D from "@/components/Casino3D";
 import { Live, Shield, Sparkle } from "@/components/Icons";
 import {
   Block,
@@ -261,7 +261,7 @@ export default function CasinoPage() {
         kicker="Explore casino games online"
         title="Online Casino Games"
         sub="Slots, roulette, blackjack, baccarat and live dealer tables — in one place."
-        art={<ArtCasino data-spin data-spin-duration="60" />}
+        art={<Casino3D />}
         actions={
           <>
             <Btn href="/#register" variant="primary" magnetic>

@@ -1,6 +1,6 @@
 import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
-import { ArtCricket } from "@/components/Art";
+import Cricket3D from "@/components/Cricket3D";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
 import {
   Block,
@@ -197,7 +197,7 @@ export default function CricketBettingPage() {
         kicker="Cricket Betting India"
         title="Online Cricket Betting & Live Cricket Betting on FairPlay"
         sub="Experience Cricket Betting India with FairPlay."
-        art={<ArtCricket data-spin data-spin-duration="100" />}
+        art={<Cricket3D />}
         actions={
           <>
             <Btn href="/#register" variant="primary" magnetic>
