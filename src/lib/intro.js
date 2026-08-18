@@ -1,25 +1,14 @@
 /* ============================================================================
    INTRO HANDSHAKE
    ----------------------------------------------------------------------------
-   The preloader and the motion layer are separate components, but the hero's
-   entrance must not play behind the curtain. This module is the one-line
-   contract between them: MotionProvider waits on `intro`, Preloader resolves
-   it — and resolves it immediately when there is no curtain to lift.
+   Preloader is disabled; resolves immediately so text renders without delay.
    ========================================================================== */
 
-let release;
+export const intro = Promise.resolve();
 
-export const intro = new Promise((resolve) => {
-  release = resolve;
-});
+export function finishIntro() {}
 
-export function finishIntro() {
-  release?.();
-  release = null;
+export function introReady() {
+  return Promise.resolve();
 }
 
-/* Never let a missed handshake strand the page: whatever happens, motion
-   starts within the timeout. */
-export function introReady(timeout = 3000) {
-  return Promise.race([intro, new Promise((resolve) => setTimeout(resolve, timeout))]);
-}

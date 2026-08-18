@@ -4,10 +4,9 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
-import Preloader from "@/components/Preloader";
-import Cursor from "@/components/Cursor";
 import ScrollProgress from "@/components/ScrollProgress";
 import { JsonLd, SITE, graph, organizationSchema, websiteSchema } from "@/lib/seo";
+
 
 /* Three voices, one system: Sora sets the display tone, Geist carries the
    body, Geist Mono handles labels and figures, and a single italic serif is

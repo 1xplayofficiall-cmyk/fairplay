@@ -70,13 +70,12 @@ const num = (value, fallback) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
-/* SplitText must measure line breaks against the real font, not the fallback,
-   or every line re-flows the moment the webfont swaps in. */
+/* SplitText measures line breaks against the font */
 const fontsReady = () =>
-  Promise.race([
-    typeof document !== "undefined" && document.fonts ? document.fonts.ready : Promise.resolve(),
-    new Promise((resolve) => setTimeout(resolve, 1500)),
-  ]);
+  typeof document !== "undefined" && document.fonts
+    ? Promise.race([document.fonts.ready, new Promise((resolve) => setTimeout(resolve, 200))])
+    : Promise.resolve();
+
 
 /* ============================================================================
    THE SCENE
@@ -414,11 +413,12 @@ export default function MotionProvider() {
 
           const teardown = [];
 
-          Promise.all([fontsReady(), introReady()]).then(() => {
+          fontsReady().then(() => {
             if (cancelled) return;
             context.add(() => buildScene(context.conditions, teardown));
             ScrollTrigger.refresh();
           });
+
 
           return () => teardown.forEach((undo) => undo());
         }
