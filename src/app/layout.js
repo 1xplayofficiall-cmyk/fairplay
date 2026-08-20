@@ -75,6 +75,9 @@ export const metadata = {
     title: SITE.title,
     description: SITE.description,
   },
+  verification: {
+    google: "pe3d3Bub6s3ZVTaWK_0SVZ41dm8o7U6YB0pEwUIIhPY",
+  },
   category: "Sports betting",
 };
 
