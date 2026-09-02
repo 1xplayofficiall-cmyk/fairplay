@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono, Sora, Instrument_Serif } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 import Header from "@/components/Header";
@@ -28,6 +29,10 @@ const instrument = Instrument_Serif({
    Because it writes to <html> ahead of hydration, <html> is marked
    suppressHydrationWarning. */
 const MOTION_FLAG = `try{if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion')}}catch(e){}`;
+const GA_ID = "G-TSETMTVCKW";
+const OG_TITLE = "FairPlay – Online Sports Betting & Online Casino in India";
+const OG_DESCRIPTION =
+  "Explore sports betting and online casino games on FairPlay. Follow cricket, football, tennis, kabaddi and live casino games on one platform. 18+. Play responsibly.";
 
 export const metadata = {
   /* Everything URL-shaped below — canonicals, og:url, og:image — is written as
@@ -63,17 +68,26 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: SITE.title,
-    description: SITE.description,
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
     url: "/",
     siteName: SITE.name,
     type: "website",
     locale: SITE.locale,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "FairPlay – Online Sports Betting & Online Casino",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE.title,
-    description: SITE.description,
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    images: ["/opengraph-image"],
   },
   verification: {
     google: "pe3d3Bub6s3ZVTaWK_0SVZ41dm8o7U6YB0pEwUIIhPY",
@@ -122,6 +136,19 @@ export default function RootLayout({ children }) {
         </div>
 
         <MotionProvider />
+
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );

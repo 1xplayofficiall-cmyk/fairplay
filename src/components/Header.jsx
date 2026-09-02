@@ -132,7 +132,7 @@ export default function Header() {
           <Link className="brand" href="/" aria-label="FairPlay — home">
             {/* Intrinsic size of the asset is 122×50 — declaring anything else
                 reserves the wrong box and shifts the bar on load. */}
-            <Image src="/fairplay-logo.png" alt="FairPlay" width={122} height={50} quality={100} priority />
+            <img src="/fairplay-logo.png" alt="FairPlay" width={122} height={50} quality={100} priority />
           </Link>
 
           <nav className="site-nav" aria-label="Primary">
