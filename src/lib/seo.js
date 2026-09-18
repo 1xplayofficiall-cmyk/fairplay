@@ -16,9 +16,9 @@ export const SITE = {
   name: "FairPlay",
   locale: "en_IN",
   language: "en-IN",
-  title: "FairPlay Official Website – Online Sports Betting & Online Casino in India",
+  title: "FairPlay Official Website | Online Sports Betting & Casino in India",
   description:
-    "FairPlay brings Online Sports Betting and Online Casino India together on one platform — cricket, football, tennis, kabaddi, esports, live dealer tables and the FairPlay App.",
+    "FairPlay is an online sports betting and casino platform in India, offering cricket, football, tennis, kabaddi, esports, live dealer games and the FairPlay App.",
 };
 
 export const absolute = (path = "/") => new URL(path, SITE.url).toString();
@@ -50,13 +50,14 @@ export const ROUTES = [
    several host spellings and every marketing link carries a hash, so without
    one Google is free to pick its own preferred URL. */
 export function pageMeta({ title, description, path, keywords }) {
+  const plainTitle = typeof title === "object" && title?.absolute ? title.absolute : title;
   return {
     title,
     description,
     ...(keywords ? { keywords } : {}),
     alternates: { canonical: path },
     openGraph: {
-      title,
+      title: plainTitle,
       description,
       url: path,
       siteName: SITE.name,
@@ -70,7 +71,7 @@ export function pageMeta({ title, description, path, keywords }) {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: plainTitle,
       description,
       images: [OG_IMAGE],
     },
@@ -139,11 +140,12 @@ export function faqSchema(faqs, path) {
 }
 
 export function webPageSchema({ title, description, path, breadcrumb }) {
+  const plainTitle = typeof title === "object" && title?.absolute ? title.absolute : title;
   return {
     "@type": "WebPage",
     "@id": `${absolute(path)}#webpage`,
     url: absolute(path),
-    name: title,
+    name: plainTitle,
     description,
     inLanguage: SITE.language,
     isPartOf: { "@id": `${SITE.url}/#website` },

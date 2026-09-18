@@ -20,9 +20,9 @@ import {
 } from "@/components/ui";
 
 export const metadata = pageMeta({
-  title: "Tennis Betting Online – Explore Tennis Betting Odds & Markets on FairPlay",
+  title: "Tennis Betting Online | Odds & Markets",
   description:
-    "Explore Tennis Betting Online with FairPlay — match winner, set betting, total games, handicaps, live tennis betting, and major Grand Slam tournament coverage.",
+    "Explore tennis betting online with FairPlay. Bet on match winners, sets, total games, handicaps, live tennis, and coverage of major Grand Slam tournaments.",
   path: "/tennis-betting",
 });
 

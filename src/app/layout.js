@@ -30,7 +30,7 @@ const instrument = Instrument_Serif({
    suppressHydrationWarning. */
 const MOTION_FLAG = `try{if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion')}}catch(e){}`;
 const GA_ID = "G-TSETMTVCKW";
-const OG_TITLE = "FairPlay – Online Sports Betting & Online Casino in India";
+const OG_TITLE = "FairPlay Official Website | Online Sports Betting & Casino in India";
 const OG_DESCRIPTION =
   "Explore sports betting and online casino games on FairPlay. Follow cricket, football, tennis, kabaddi and live casino games on one platform. 18+. Play responsibly.";
 

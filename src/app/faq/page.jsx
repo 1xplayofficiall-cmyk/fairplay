@@ -14,7 +14,7 @@ import {
 } from "@/components/ui";
 
 export const metadata = pageMeta({
-  title: "Betting FAQ | Sports Betting, Odds, Payments & Account Help",
+  title: "Betting FAQ | Sports, Odds & Payment Help",
   description:
     "Find answers to common betting questions about sports, odds, live betting, accounts, payments, withdrawals, bonuses, verification and responsible gambling.",
   path: "/faq",

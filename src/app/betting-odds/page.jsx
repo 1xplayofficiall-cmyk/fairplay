@@ -20,7 +20,7 @@ import {
 } from "@/components/ui";
 
 export const metadata = pageMeta({
-  title: "Betting Odds Explained | Sports, Live & Online Betting Odds",
+  title: "Live & Sports Betting Odds Explained",
   description:
     "Learn how betting odds work and how to read decimal, fractional and American odds. Explore sports betting odds, live odds, betting lines and more.",
   path: "/betting-odds",

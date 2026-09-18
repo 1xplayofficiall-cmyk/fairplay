@@ -20,9 +20,9 @@ import {
 } from "@/components/ui";
 
 export const metadata = pageMeta({
-  title: "Basketball Betting Online | Odds, Markets & Live Betting",
+  title: "Online Basketball Betting & Live Odds",
   description:
-    "Explore basketball betting online with basketball odds, live betting, moneyline, point spreads, totals, player props and more. Check available basketball markets.",
+    "Explore basketball betting online with FairPlay, including odds, live betting, moneyline, spreads, totals, player props and a range of betting markets.",
   path: "/basketball-betting",
 });
 

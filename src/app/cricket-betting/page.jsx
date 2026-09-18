@@ -22,7 +22,7 @@ import {
 } from "@/components/ui";
 
 export const metadata = pageMeta({
-  title: "Cricket Betting India – Online Cricket Betting & Live Cricket Betting on FairPlay",
+  title: "Online Cricket Betting & Live Cricket Betting",
   description:
     "Experience Cricket Betting India with FairPlay — pre-match and Live Cricket Betting markets across IPL, ICC events, T20 leagues, ODIs and Test cricket.",
   path: "/cricket-betting",

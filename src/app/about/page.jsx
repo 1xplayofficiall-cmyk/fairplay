@@ -17,9 +17,9 @@ import {
 } from "@/components/ui";
 
 export const metadata = pageMeta({
-  title: "About FairPlay",
+  title: { absolute: "FairPlay | Sports Betting, Casino & Online Gaming in India" },
   description:
-    "Welcome to the FairPlay Official Website — a modern platform bringing Online Sports Betting and Online Casino India together in one place.",
+    "FairPlay Official Website offers Online Sports Betting and Online Casino India with diverse sports and gaming options, creating an engaging entertainment experience.",
   path: "/about",
 });
 
