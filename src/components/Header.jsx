@@ -24,9 +24,6 @@ export default function Header() {
   const menu = useRef(null);
   const header = useRef(null);
 
-  /* The menu is stored as "open for which route" rather than a plain boolean,
-     so navigating anywhere closes it during render instead of via an effect —
-     no cascading re-render, and browser back/forward is covered too. */
   const [openFor, setOpenFor] = useState(null);
   const open = openFor === pathname;
   const setOpen = (next) => setOpenFor(next ? pathname : null);
