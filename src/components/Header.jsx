@@ -10,7 +10,6 @@ import { Close } from "./Icons";
 import { Btn } from "./ui";
 
 const NAV = [
-  { href: "/#sports", label: "Sports betting" },
   { href: "/cricket-betting", label: "Cricket" },
   { href: "/football-betting", label: "Football" },
   { href: "/tennis-betting", label: "Tennis" },
