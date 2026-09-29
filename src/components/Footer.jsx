@@ -12,7 +12,7 @@ const COLUMNS = [
       ["Tennis Betting Online", "/tennis-betting"],
       ["Basketball Betting Online", "/basketball-betting"],
       ["Betting Odds Explained", "/betting-odds"],
-      ["Live Sports Betting", "/#sports"],
+     
     ],
   },
   {
