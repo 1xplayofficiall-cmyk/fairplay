@@ -7,12 +7,12 @@ import { ROUTES, absolute } from "@/lib/seo";
    ships with the deploy — it changes exactly when the pages change. Writing a
    fresh `new Date()` per request would claim every page was modified on every
    crawl, which crawlers learn to discount. */
-const BUILT_AT = new Date();
+const LAST_MODIFIED = new Date("2026-09-23T11:06:45+00:00");
 
 export default function sitemap() {
   return ROUTES.map(({ path, priority, changeFrequency }) => ({
     url: absolute(path),
-    lastModified: BUILT_AT,
+    lastModified: LAST_MODIFIED,
     changeFrequency,
     priority,
   }));

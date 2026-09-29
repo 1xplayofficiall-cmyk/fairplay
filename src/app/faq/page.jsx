@@ -1,4 +1,4 @@
-import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
+import { JsonLd, breadcrumbSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import { ArtMark } from "@/components/Art";
 import { Clock, Shield } from "@/components/Icons";
@@ -166,6 +166,27 @@ const faqsGroup5 = [
   },
 ];
 
+const allFaqs = [
+  ...faqsGroup1,
+  ...faqsGroup2,
+  ...faqsGroup3,
+  ...faqsGroup4,
+  ...faqsGroup5,
+];
+
+const faqPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: allFaqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: a,
+    },
+  })),
+};
+
 /* Home → this page. The trail matches the visible route line in PageHero. */
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -184,9 +205,9 @@ export default function FAQPage() {
             path: "/faq",
             breadcrumb: crumbs,
           }),
-          faqSchema([...faqsGroup1, ...faqsGroup2, ...faqsGroup3, ...faqsGroup4, ...faqsGroup5], "/faq"),
         )}
       />
+      <JsonLd schema={faqPageSchema} />
 
       <PageHero
         route={<span>Frequently Asked Questions</span>}

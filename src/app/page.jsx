@@ -1,4 +1,4 @@
-import { JsonLd, SITE, faqSchema, graph, webPageSchema } from "@/lib/seo";
+import { JsonLd, SITE, graph, webPageSchema } from "@/lib/seo";
 import HeroStage from "@/components/HeroStage";
 import Accordion from "@/components/Accordion";
 import { ArtStumps, ArtPitch } from "@/components/Art";
@@ -104,6 +104,19 @@ const faqs = [
   },
 ];
 
+const faqPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: a,
+    },
+  })),
+};
+
 const phoneRows = [
   { label: "Cricket · Match winner", value: "Live" },
   { label: "Football · Over / Under", value: "Live" },
@@ -118,10 +131,10 @@ export default function Home() {
     <main id="main">
       <JsonLd
         schema={graph(
-          webPageSchema({ title: SITE.title, description: SITE.description, path: "/" }),
-          faqSchema(faqs, "/")
+          webPageSchema({ title: SITE.title, description: SITE.description, path: "/" })
         )}
       />
+      <JsonLd schema={faqPageSchema} />
 
       {/* ======================================================= HERO ==== */}
       <HeroStage />

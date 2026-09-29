@@ -1,4 +1,4 @@
-import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
+import { JsonLd, breadcrumbSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import Tennis3D from "@/components/Tennis3D";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
@@ -184,6 +184,19 @@ const faqs = [
   },
 ];
 
+const faqPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: a,
+    },
+  })),
+};
+
 /* Home → this page. The trail matches the visible route line in PageHero. */
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -202,9 +215,9 @@ export default function TennisBettingPage() {
             path: "/tennis-betting",
             breadcrumb: crumbs,
           }),
-          faqSchema(faqs, "/tennis-betting"),
         )}
       />
+      <JsonLd schema={faqPageSchema} />
 
       <PageHero
         route={<span>Tennis betting</span>}

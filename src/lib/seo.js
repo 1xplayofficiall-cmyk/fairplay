@@ -32,15 +32,15 @@ export const OG_IMAGE = "/opengraph-image";
    `changeFrequency` and `priority` are hints only — Google ignores them — but
    they cost nothing and other crawlers still read them. */
 export const ROUTES = [
-  { path: "/", name: "Home", priority: 1, changeFrequency: "weekly" },
-  { path: "/cricket-betting", name: "Cricket betting", priority: 0.9, changeFrequency: "weekly" },
-  { path: "/football-betting", name: "Football betting", priority: 0.9, changeFrequency: "weekly" },
+  { path: "/", name: "Home", priority: 1.0, changeFrequency: "weekly" },
+  { path: "/cricket-betting", name: "Cricket betting", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/football-betting", name: "Football betting", priority: 0.8, changeFrequency: "weekly" },
   { path: "/tennis-betting", name: "Tennis betting", priority: 0.8, changeFrequency: "weekly" },
   { path: "/basketball-betting", name: "Basketball betting", priority: 0.8, changeFrequency: "weekly" },
-  { path: "/casino", name: "Casino", priority: 0.9, changeFrequency: "weekly" },
+  { path: "/casino", name: "Casino", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/faq", name: "FAQ", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/about", name: "About", priority: 0.8, changeFrequency: "monthly" },
   { path: "/betting-odds", name: "Betting odds", priority: 0.8, changeFrequency: "monthly" },
-  { path: "/faq", name: "FAQ", priority: 0.7, changeFrequency: "monthly" },
-  { path: "/about", name: "About", priority: 0.6, changeFrequency: "monthly" },
 ];
 
 /* --------------------------------------------------------------- metadata

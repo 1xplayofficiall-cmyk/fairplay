@@ -1,4 +1,4 @@
-import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
+import { JsonLd, breadcrumbSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import Cricket3D from "@/components/Cricket3D";
 import { Bolt, Clock, Live, Shield } from "@/components/Icons";
@@ -163,6 +163,19 @@ const faqs = [
   },
 ];
 
+const faqPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: a,
+    },
+  })),
+};
+
 const phoneRows = [
   { label: "Match winner", value: "Live" },
   { label: "Next over runs", value: "Live" },
@@ -188,9 +201,9 @@ export default function CricketBettingPage() {
             path: "/cricket-betting",
             breadcrumb: crumbs,
           }),
-          faqSchema(faqs, "/cricket-betting"),
         )}
       />
+      <JsonLd schema={faqPageSchema} />
 
       <PageHero
         route={<span>Cricket betting</span>}

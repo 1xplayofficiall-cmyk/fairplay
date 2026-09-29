@@ -1,4 +1,4 @@
-import { JsonLd, breadcrumbSchema, faqSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
+import { JsonLd, breadcrumbSchema, graph, pageMeta, webPageSchema } from "@/lib/seo";
 import Accordion from "@/components/Accordion";
 import Casino3D from "@/components/Casino3D";
 import { Live, Shield, Sparkle } from "@/components/Icons";
@@ -234,6 +234,69 @@ const faqs = [
   },
 ];
 
+const faqPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What are online casino games?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Online casino games are digital versions of traditional casino games that can be played through an online platform. Common categories include slots, roulette, blackjack, baccarat, and live casino games.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What casino games can I find online?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Depending on the platform, available casino games online may include:\nSlots\nRoulette\nBlackjack\nBaccarat\nLive dealer games\nOther casino game variations\nGame availability can vary by location.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is a live casino?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A live casino uses real-time video streaming and live dealers to create an interactive casino experience online. Common live games include roulette, blackjack, and baccarat.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are casino winnings guaranteed?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Casino games involve risk, and there is no guaranteed return or guaranteed profit. Players can lose money.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can I understand a casino game's rules?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Each game should provide its own rules and information. Review the game's betting options, features, limits, and terms before playing.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is online casino gambling legal?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Online gambling laws vary between countries, states, and jurisdictions. Check the laws that apply to your location before participating.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I set gambling limits?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Where available, responsible gambling tools may allow users to set limits on deposits, spending, playing time, or account activity.",
+      },
+    },
+  ],
+};
+
 /* Home → this page. The trail matches the visible route line in PageHero. */
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -252,9 +315,9 @@ export default function CasinoPage() {
             path: "/casino",
             breadcrumb: crumbs,
           }),
-          faqSchema(faqs, "/casino"),
         )}
       />
+      <JsonLd schema={faqPageSchema} />
 
       <PageHero
         route={<span>Casino</span>}
