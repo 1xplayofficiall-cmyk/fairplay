@@ -19,10 +19,11 @@ import {
   TileGrid,
 } from "@/components/ui";
 
+/* Verbatim from the on-page audit sheet — see the note in cricket-betting. */
 export const metadata = pageMeta({
-  title: "Football Betting Online",
+  title: { absolute: "Football Betting Online | Live Football Betting Odds" },
   description:
-    "Explore football betting online — upcoming fixtures, football odds, match result, total goals, correct score, handicap and live in-play markets.",
+    "Enjoy football betting online with FairPlay. Check football betting odds, live football betting, and football live betting options for football fans in India.",
   path: "/football-betting",
 });
 

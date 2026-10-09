@@ -21,10 +21,14 @@ import {
   TileGrid,
 } from "@/components/ui";
 
+/* Title and description are set verbatim from the on-page audit sheet.
+   `absolute` bypasses the root layout's "%s | FairPlay" template — the sheet's
+   titles already carry the brand where it wants it, and letting the template
+   append would push every one of them past its target length. */
 export const metadata = pageMeta({
-  title: "Online Cricket Betting & Live Cricket Betting",
+  title: { absolute: "Online Cricket Betting | Live Cricket Betting - IPL Betting" },
   description:
-    "Experience Cricket Betting India with FairPlay — pre-match and Live Cricket Betting markets across IPL, ICC events, T20 leagues, ODIs and Test cricket.",
+    "Explore online cricket betting with FairPlay. Check live cricket betting, IPL betting, T20 betting, cricket betting odds, and international cricket betting.",
   path: "/cricket-betting",
 });
 

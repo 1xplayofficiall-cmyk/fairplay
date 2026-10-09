@@ -19,10 +19,11 @@ import {
   TileGrid,
 } from "@/components/ui";
 
+/* Verbatim from the on-page audit sheet — see the note in cricket-betting. */
 export const metadata = pageMeta({
-  title: "Live & Sports Betting Odds Explained",
+  title: { absolute: "Online Betting Odds | Live Betting Odds | Sports Odds" },
   description:
-    "Learn how betting odds work and how to read decimal, fractional and American odds. Explore sports betting odds, live odds, betting lines and more.",
+    "Explore Betting Odds Online with FairPlay. Find live sports odds, online betting odds, and sports betting markets for popular sporting events in one place.",
   path: "/betting-odds",
 });
 

@@ -19,10 +19,11 @@ import {
   TileGrid,
 } from "@/components/ui";
 
+/* Verbatim from the on-page audit sheet — see the note in cricket-betting. */
 export const metadata = pageMeta({
-  title: "Online Casino Games",
+  title: { absolute: "Online Casino Games in India | Live Casino | FairPlay" },
   description:
-    "Explore casino games online — slots, roulette, blackjack, baccarat and live dealer tables, with the rules and limits of each game explained.",
+    "Play casino games online with FairPlay. Explore live casino games, live dealer tables, and popular online casino games with different options in India.",
   path: "/casino",
 });
 

@@ -19,10 +19,11 @@ import {
   TileGrid,
 } from "@/components/ui";
 
+/* Verbatim from the on-page audit sheet — see the note in cricket-betting. */
 export const metadata = pageMeta({
-  title: "Tennis Betting Online | Odds & Markets",
+  title: { absolute: "Tennis Betting in India | Online Tennis Betting | FairPlay" },
   description:
-    "Explore tennis betting online with FairPlay. Bet on match winners, sets, total games, handicaps, live tennis, and coverage of major Grand Slam tournaments.",
+    "Explore tennis betting in India with FairPlay. Find tennis betting odds, live tennis betting, markets, and online betting options on a trusted platform.",
   path: "/tennis-betting",
 });
 

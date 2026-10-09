@@ -19,10 +19,14 @@ import {
   TileGrid,
 } from "@/components/ui";
 
+/* Verbatim from the on-page audit sheet — see the note in cricket-betting.
+   The sheet has stray double spaces around the pipes here; collapsed, because
+   a doubled space in a title tag renders as a typo and the browser folds it
+   anyway. */
 export const metadata = pageMeta({
-  title: "Online Basketball Betting & Live Odds",
+  title: { absolute: "Live Basketball Betting | Online Basketball Betting Odds" },
   description:
-    "Explore basketball betting online with FairPlay, including odds, live betting, moneyline, spreads, totals, player props and a range of betting markets.",
+    "Looking for basketball betting in India? FairPlay offers online basketball betting, live markets, and updated basketball odds for an easy betting experience.",
   path: "/basketball-betting",
 });
 
