@@ -15,6 +15,7 @@ const NAV = [
   { href: "/tennis-betting", label: "Tennis" },
   { href: "/basketball-betting", label: "Basketball" },
   { href: "/casino", label: "Casino" },
+  { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];

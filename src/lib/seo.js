@@ -41,6 +41,7 @@ export const ROUTES = [
   { path: "/faq", name: "FAQ", priority: 0.8, changeFrequency: "monthly" },
   { path: "/about", name: "About", priority: 0.8, changeFrequency: "monthly" },
   { path: "/betting-odds", name: "Betting odds", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/blog", name: "Blog", priority: 0.7, changeFrequency: "weekly" },
 ];
 
 /* --------------------------------------------------------------- metadata
@@ -148,6 +149,26 @@ export function webPageSchema({ title, description, path, breadcrumb }) {
     name: plainTitle,
     description,
     inLanguage: SITE.language,
+    isPartOf: { "@id": `${SITE.url}/#website` },
+    ...(breadcrumb ? { breadcrumb: { "@id": breadcrumb["@id"] } } : {}),
+  };
+}
+
+/* A blog post. Every value comes from a field the writer actually filled in —
+   `author` is the organisation rather than an invented person, and there is no
+   `dateModified` because nothing on the site tracks one yet. */
+export function blogPostingSchema({ title, description, path, image, publishedAt, breadcrumb }) {
+  return {
+    "@type": "BlogPosting",
+    "@id": `${absolute(path)}#article`,
+    headline: title,
+    description,
+    url: absolute(path),
+    inLanguage: SITE.language,
+    ...(image ? { image: [image] } : {}),
+    ...(publishedAt ? { datePublished: publishedAt } : {}),
+    author: { "@id": `${SITE.url}/#organization` },
+    publisher: { "@id": `${SITE.url}/#organization` },
     isPartOf: { "@id": `${SITE.url}/#website` },
     ...(breadcrumb ? { breadcrumb: { "@id": breadcrumb["@id"] } } : {}),
   };

@@ -11,6 +11,7 @@
 @import "../styles/hero.css";
 @import "../styles/home.css";
 @import "../styles/pages.css";
+@import "../styles/blog.css";
 
 /* Expose the design tokens to Tailwind's utility generator so one-off
    utilities stay on-system instead of inventing new values. */

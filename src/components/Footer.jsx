@@ -28,6 +28,7 @@ const COLUMNS = [
     title: "FairPlay",
     links: [
       ["About FairPlay", "/about"],
+      ["Betting Blog", "/blog"],
       ["Frequently Asked Questions", "/faq"],
       ["FairPlay App Download", "/#download"],
       ["FairPlay Login", "/#login"],

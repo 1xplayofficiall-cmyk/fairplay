@@ -1,0 +1,278 @@
+/* ============================================================================
+   BLOG — post cards and the Portable Text body.
+   ----------------------------------------------------------------------------
+   Portable Text emits bare h2/h3/ul/blockquote/img, so everything a writer can
+   produce in the studio needs a rule here. Scoped to .post-body so it cannot
+   leak into the marketing pages.
+   ========================================================================== */
+
+/* =============================== CARD ==================================== */
+.post-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+}
+.post-card:hover {
+  transform: translateY(-4px);
+}
+
+.post-card__media {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--ink-200);
+  aspect-ratio: 16 / 9;
+}
+.post-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-4) var(--ease-out);
+}
+.post-card:hover .post-card__media img {
+  transform: scale(1.04);
+}
+
+.post-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-2) var(--sp-3);
+}
+.post-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.post-card__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: 650;
+  line-height: 1.22;
+  letter-spacing: var(--ls-tight);
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+/* ============================== POST PAGE ================================
+   One centred measure for the whole article. */
+.post-measure {
+  max-width: 72ch;
+}
+
+.post-head {
+  display: flex;
+  flex-direction: column;
+  padding-top: clamp(7rem, 14vh, 10rem);
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
+.post-head .page-hero__route {
+  margin-bottom: var(--sp-5);
+}
+
+.post-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.125rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: var(--ls-mega);
+  text-wrap: balance;
+}
+
+.post-standfirst {
+  margin-top: var(--sp-5);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  letter-spacing: -0.012em;
+  color: var(--fg-2);
+}
+
+/* Date · reading time. */
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--stroke-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+.post-meta__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--o-500);
+}
+
+/* The cover runs wider than the text — the only element that does. */
+.post-cover {
+  margin: 0 auto var(--sp-8);
+  max-width: 1040px;
+  overflow: hidden;
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--r-lg);
+}
+.post-cover img {
+  width: 100%;
+  height: auto;
+}
+
+.post-more__title {
+  margin-bottom: var(--sp-6);
+}
+
+/* ============================== POST BODY ================================ */
+.post-body {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg-2);
+}
+.post-body > * + * {
+  margin-top: var(--sp-5);
+}
+
+.post-body h2 {
+  margin-top: var(--sp-8);
+  font-size: var(--fs-h3);
+  font-weight: 650;
+  letter-spacing: var(--ls-tight);
+  color: var(--fg);
+}
+.post-body h3 {
+  margin-top: var(--sp-7);
+  font-size: var(--fs-h4);
+  font-weight: 650;
+  letter-spacing: var(--ls-tight);
+  color: var(--fg);
+}
+/* A heading straight after another heading should not get the big gap. */
+.post-body h2 + h3 {
+  margin-top: var(--sp-4);
+}
+
+.post-body ul,
+.post-body ol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-left: 0;
+  list-style: none;
+}
+.post-body li {
+  position: relative;
+  padding-left: 1.6em;
+}
+.post-body ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.3em;
+  top: 0.68em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--o-500);
+}
+.post-body ol {
+  counter-reset: post-step;
+}
+.post-body ol > li {
+  counter-increment: post-step;
+}
+.post-body ol > li::before {
+  content: counter(post-step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--o-400);
+}
+
+.post-body blockquote {
+  position: relative;
+  margin-inline: 0;
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--r-md);
+  background: linear-gradient(97deg, rgba(255, 140, 0, 0.06), transparent 60%);
+  font-family: var(--font-display);
+  font-size: var(--fs-lede);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.post-body blockquote::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  border-radius: var(--r-pill);
+  background: var(--grad-brand);
+}
+
+.post-body a {
+  color: var(--o-300);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--stroke-o);
+  transition: text-decoration-color var(--dur-2) var(--ease-out);
+}
+.post-body a:hover {
+  text-decoration-color: var(--o-400);
+}
+
+.post-body strong {
+  color: var(--fg);
+  font-weight: 650;
+}
+
+.post-body code {
+  padding: 0.15em 0.4em;
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--r-xs);
+  background: rgba(255, 255, 255, 0.04);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.post-body figure {
+  margin: var(--sp-7) 0;
+}
+.post-body figure img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--r-md);
+}
+.post-body figcaption {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-small);
+  color: var(--fg-4);
+}
+
+.post-body__end {
+  margin-top: var(--sp-8);
+  margin-bottom: var(--sp-5);
+}
+/* The trailing "All articles" link is not part of the prose. */
+.post-body > .link {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+/* ============================== EMPTY ==================================== */
+.post-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  padding: var(--sp-8) var(--sp-6);
+  border: 1px dashed var(--stroke-2);
+  border-radius: var(--r-lg);
+}
