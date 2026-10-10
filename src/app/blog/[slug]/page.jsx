@@ -128,10 +128,16 @@ export default async function PostPage({ params }) {
           standfirst back at the reader. */}
       <header className="post-head">
         <div className="shell post-measure">
+          {/* Category is guarded: a post saved before categories became
+              documents resolves to null until it is re-picked. */}
           <nav className="page-hero__route" data-anim="fade" data-on="load">
             <Link href="/blog">Blog</Link>
-            <span>/</span>
-            <span>{post.category}</span>
+            {post.category ? (
+              <>
+                <span>/</span>
+                <span>{post.category}</span>
+              </>
+            ) : null}
           </nav>
 
           <h1 className="post-title" data-anim="split" data-on="load" data-delay="0.12">

@@ -25,12 +25,15 @@ export const urlFor = (source) => builder.image(source);
 
 /* ------------------------------------------------------------------ queries */
 
+/* `category` is a reference, so it is dereferenced to its title here. Doing it
+   in the query means renaming a category in the studio updates every post
+   that uses it — nothing stores a copy of the name. */
 const CARD_FIELDS = `
   _id,
   title,
   "slug": slug.current,
   excerpt,
-  category,
+  "category": category->title,
   publishedAt,
   coverImage
 `;
