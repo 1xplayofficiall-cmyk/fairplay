@@ -399,7 +399,9 @@ export default function MotionProvider() {
         if (!target) return;
         event.preventDefault();
         instance.scrollTo(target, true, "top 100px");
-        history.replaceState(null, "", url.hash);
+        /* Deliberately not writing the hash to the address bar. Jumping to a
+           heading is navigation within a page the reader is already on — it
+           should not leave `#some-heading` in the URL they go on to copy. */
       };
       document.addEventListener("click", onClick);
 
