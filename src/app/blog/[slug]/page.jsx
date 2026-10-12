@@ -63,6 +63,37 @@ export async function generateMetadata({ params }) {
    in the studio needs an entry here or a rule in blog.css. */
 const components = {
   types: {
+    /* @sanity/table shape: { rows: [{ _key, cells: [string] }] }.
+       The plugin has no header concept, so the first row is treated as one —
+       which is what a writer filling in a table expects. */
+    table: ({ value }) => {
+      const [head, ...body] = value?.rows ?? [];
+      if (!head) return null;
+      return (
+        <div className="post-table">
+          <table>
+            <thead>
+              <tr>
+                {(head.cells ?? []).map((cell, i) => (
+                  <th key={i} scope="col">
+                    {cell}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {body.map((row) => (
+                <tr key={row._key}>
+                  {(row.cells ?? []).map((cell, i) => (
+                    <td key={i}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
     image: ({ value }) => (
       <figure>
         <img
