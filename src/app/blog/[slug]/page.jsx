@@ -211,7 +211,7 @@ export default async function PostPage({ params }) {
           {toc.length >= 2 ? (
             <aside className="post-toc" data-pin-y data-anim="fade">
               <span className="post-toc__title">On this page</span>
-              <nav>
+              <nav data-toc>
                 {toc.map((heading) => (
                   <a key={heading.id} href={`#${heading.id}`}>
                     {heading.text}

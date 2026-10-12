@@ -217,6 +217,32 @@ function buildScene({ desktop, hover }, teardown) {
     });
   });
 
+  /* ---------------------------------------------------------- scrollspy
+     Keeps the current heading marked in a contents list. Each section owns
+     the span from its own heading to the next one, so exactly one link is
+     active at any scroll position rather than several or none. */
+  gsap.utils.toArray("[data-toc]").forEach((nav) => {
+    const links = gsap.utils.toArray("a[href^='#']", nav);
+
+    links.forEach((link, i) => {
+      const target = document.querySelector(link.getAttribute("href"));
+      if (!target) return;
+      const next = links[i + 1]
+        ? document.querySelector(links[i + 1].getAttribute("href"))
+        : null;
+
+      ScrollTrigger.create({
+        trigger: target,
+        /* The first entry lights up as the article arrives, so the list is
+           never left with nothing marked. */
+        start: i === 0 ? "top 90%" : "top 25%",
+        endTrigger: next ?? target.closest("[data-pin-container]") ?? target,
+        end: next ? "top 25%" : "bottom bottom",
+        onToggle: (self) => link.classList.toggle("is-active", self.isActive),
+      });
+    });
+  });
+
   /* ------------------------------------------------- pinned side column
      ScrollSmoother transforms the whole content wrapper, which breaks
      position: sticky — the element rides along with the transform instead of

@@ -6,7 +6,7 @@ const COLUMNS = [
   {
     title: "Sportsbook",
     links: [
-      ["Online Sports Betting", "/#sports"],
+      ["Online Sports Betting", "/"],
       ["Cricket Betting India", "/cricket-betting"],
       ["Football Betting India", "/football-betting"],
       ["Tennis Betting Online", "/tennis-betting"],

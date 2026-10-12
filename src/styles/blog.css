@@ -158,6 +158,12 @@
 }
 .post-toc a:hover {
   color: var(--fg);
+  border-left-color: var(--stroke-3);
+}
+/* Set by the scrollspy in MotionProvider and left in place — the marker
+   tracks where you are, so it never clears while you are in a section. */
+.post-toc a.is-active {
+  color: var(--fg);
   border-left-color: var(--o-500);
 }
 
