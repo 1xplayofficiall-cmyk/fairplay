@@ -8,8 +8,10 @@ import {
   POST_QUERY,
   SLUGS_QUERY,
   formatDate,
+  headingId,
   readingTime,
   sanity,
+  tableOfContents,
   urlFor,
 } from "@/lib/sanity";
 import PostCard from "@/components/PostCard";
@@ -42,7 +44,14 @@ export async function generateMetadata({ params }) {
     });
   }
 
-  const base = pageMeta({ title: post.title, description: post.excerpt, path });
+  /* An explicit metaTitle is used verbatim — if someone has tuned it to 58
+     characters, appending " | FairPlay" would defeat the point. Without one,
+     the post title goes through the usual template. */
+  const base = pageMeta({
+    title: post.metaTitle ? { absolute: post.metaTitle } : post.title,
+    description: post.metaDescription || post.excerpt,
+    path,
+  });
   const image = ogImage(post);
 
   return {
@@ -106,6 +115,11 @@ const components = {
       </figure>
     ),
   },
+  block: {
+    /* Ids come from the same helper the contents list uses, so the anchors
+       cannot drift from the headings they point at. */
+    h2: ({ children, value }) => <h2 id={headingId(value)}>{children}</h2>,
+  },
   marks: {
     /* Internal links stay client-routed; external ones get the safety rel. */
     link: ({ value, children }) => {
@@ -127,6 +141,7 @@ export default async function PostPage({ params }) {
   if (!post) notFound();
 
   const more = await sanity.fetch(MORE_POSTS_QUERY, { slug });
+  const toc = tableOfContents(post.body);
   const path = `/blog/${slug}`;
   const cover = post.coverImage
     ? urlFor(post.coverImage).width(1600).height(900).fit("crop").auto("format").url()
@@ -144,8 +159,10 @@ export default async function PostPage({ params }) {
         schema={graph(
           crumbs,
           blogPostingSchema({
+            /* headline stays the real article title; only the description
+               follows the SEO override. */
             title: post.title,
-            description: post.excerpt,
+            description: post.metaDescription || post.excerpt,
             path,
             image: ogImage(post),
             publishedAt: post.publishedAt,
@@ -188,28 +205,47 @@ export default async function PostPage({ params }) {
       </header>
 
       <Section shell={false}>
-        {cover ? (
-          <figure className="shell post-cover" data-anim="scale">
-            <img
-              src={cover}
-              alt={post.coverImage?.alt ?? ""}
-              width={1600}
-              height={900}
-              /* Above the fold on an article — never lazy-load the cover. */
-              fetchPriority="high"
-              decoding="async"
-            />
-          </figure>
-        ) : null}
+        <div className="shell post-layout" data-pin-container>
+          {/* Fills the left gutter with something a reader can use. Hidden
+              below two headings — a contents list for one section is noise. */}
+          {toc.length >= 2 ? (
+            <aside className="post-toc" data-pin-y data-anim="fade">
+              <span className="post-toc__title">On this page</span>
+              <nav>
+                {toc.map((heading) => (
+                  <a key={heading.id} href={`#${heading.id}`}>
+                    {heading.text}
+                  </a>
+                ))}
+              </nav>
+            </aside>
+          ) : null}
 
-        <article className="shell post-measure post-body" data-anim="up">
-          <PortableText value={post.body} components={components} />
+          <div className="post-main">
+            {cover ? (
+              <figure className="post-cover" data-anim="scale">
+                <img
+                  src={cover}
+                  alt={post.coverImage?.alt ?? ""}
+                  width={1600}
+                  height={900}
+                  /* Above the fold on an article — never lazy-load the cover. */
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </figure>
+            ) : null}
 
-          <hr className="rule rule--brand post-body__end" />
-          <Link className="link" href="/blog">
-            All articles
-          </Link>
-        </article>
+            <article className="post-body" data-anim="up">
+              <PortableText value={post.body} components={components} />
+
+              <hr className="rule rule--brand post-body__end" />
+              <Link className="link" href="/blog">
+                All articles
+              </Link>
+            </article>
+          </div>
+        </div>
       </Section>
 
       {more.length ? (

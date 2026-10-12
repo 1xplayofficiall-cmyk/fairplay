@@ -217,6 +217,25 @@ function buildScene({ desktop, hover }, teardown) {
     });
   });
 
+  /* ------------------------------------------------- pinned side column
+     ScrollSmoother transforms the whole content wrapper, which breaks
+     position: sticky — the element rides along with the transform instead of
+     holding still. ScrollTrigger's pin is the supported way to do this. */
+  if (desktop) {
+    gsap.utils.toArray("[data-pin-y]").forEach((el) => {
+      const container = el.closest("[data-pin-container]") ?? el.parentElement;
+      if (!container) return;
+      ScrollTrigger.create({
+        trigger: container,
+        start: "top 120px",
+        end: "bottom bottom",
+        pin: el,
+        pinSpacing: false,
+        invalidateOnRefresh: true,
+      });
+    });
+  }
+
   /* ------------------------------------- horizontal pinned panel scroller */
   if (desktop) {
     gsap.utils.toArray("[data-pin-x]").forEach((section) => {

@@ -110,10 +110,81 @@
   background: var(--o-500);
 }
 
-/* The cover runs wider than the text — the only element that does. */
+/* Three columns, but the middle one is the only fixed measure — so the body
+   stays centred on the page and lines up with the header above it, while the
+   contents list occupies the left gutter that was otherwise dead space. The
+   right gutter is left empty on purpose: filling both sides turns an article
+   into a dashboard. */
+.post-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 72ch) minmax(0, 1fr);
+  gap: var(--sp-6);
+}
+.post-main {
+  grid-column: 2;
+  min-width: 0;
+}
+
+.post-toc {
+  grid-column: 1;
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  width: 100%;
+  max-width: 230px;
+  padding-right: var(--sp-4);
+}
+.post-toc__title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+.post-toc nav {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--stroke-1);
+}
+.post-toc a {
+  padding: 0.55em 0 0.55em var(--sp-4);
+  margin-left: -1px;
+  border-left: 1px solid transparent;
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--fg-3);
+  transition: color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+.post-toc a:hover {
+  color: var(--fg);
+  border-left-color: var(--o-500);
+}
+
+/* Below this the gutters are too narrow to hold anything, so the contents
+   list moves above the article instead of being dropped. */
+@media (max-width: 1180px) {
+  .post-layout {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+  .post-main,
+  .post-toc {
+    grid-column: 1;
+    width: 100%;
+    max-width: 72ch;
+    justify-self: center;
+  }
+  .post-toc {
+    order: -1;
+    padding-right: 0;
+  }
+}
+
+/* Sits inside the text column rather than running wider than it — at 1040px
+   the cover was taller than half the viewport before a word was read. */
 .post-cover {
-  margin: 0 auto var(--sp-8);
-  max-width: 1040px;
+  margin: 0 0 var(--sp-7);
   overflow: hidden;
   border: 1px solid var(--stroke-1);
   border-radius: var(--r-lg);

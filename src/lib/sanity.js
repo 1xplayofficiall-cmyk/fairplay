@@ -41,8 +41,12 @@ const CARD_FIELDS = `
 export const POSTS_QUERY = `*[_type == "post" && defined(slug.current)]
   | order(publishedAt desc){${CARD_FIELDS}}`;
 
+/* metaTitle / metaDescription are optional overrides — only the article page
+   needs them, so they stay out of CARD_FIELDS. */
 export const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   ${CARD_FIELDS},
+  metaTitle,
+  metaDescription,
   body
 }`;
 
@@ -67,6 +71,29 @@ export function readingTime(body) {
     .filter(Boolean).length;
 
   return Math.max(1, Math.round(words / 200));
+}
+
+/* ---------------------------------------------------------------- headings
+   The table of contents and the rendered <h2> ids must agree, so both go
+   through the same two functions. */
+const blockText = (block) =>
+  (block?.children ?? []).map((child) => child.text ?? "").join("");
+
+const slugifyHeading = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+
+export const headingId = (block) => slugifyHeading(blockText(block));
+
+/* H2 only. H3s would make the list longer than the article is deep. */
+export function tableOfContents(body) {
+  return (body ?? [])
+    .filter((block) => block?._type === "block" && block.style === "h2")
+    .map((block) => ({ id: headingId(block), text: blockText(block) }))
+    .filter((heading) => heading.id && heading.text);
 }
 
 export function formatDate(value) {
